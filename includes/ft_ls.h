@@ -13,15 +13,25 @@
 #ifndef FT_LS_H
 # define FT_LS_H
 
-#include "../libft/libft.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/xattr.h>
-#include <uuid/uuid.h>
-#include <dirent.h>
-#include <pwd.h>
-#include <grp.h>
-#include <time.h>
+# include "../libft/libft.h"
+# include <sys/stat.h>
+# include <sys/types.h>
+# include <sys/xattr.h>
+# include <uuid/uuid.h>
+# include <stdio.h>
+# include <dirent.h>
+# include <pwd.h>
+# include <grp.h>
+# include <time.h>
+
+typedef struct		s_flags
+{
+	int				a_lower;
+	int				l_lower;
+	int				t_lower;
+	int				r_lower;
+	int				r_upper;
+}					t_flags;
 
 typedef struct		s_file
 {
