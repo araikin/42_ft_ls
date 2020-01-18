@@ -24,20 +24,33 @@
 # include <grp.h>
 # include <time.h>
 
-typedef struct		s_flags
-{
-	int				a_lower;
-	int				l_lower;
-	int				t_lower;
-	int				r_lower;
-	int				r_upper;
-}					t_flags;
+# define A_UPP 1
+# define A_LOW 2
+# define L_LOW 4
+# define T_LOW 8
+# define R_LOW 16
+# define R_UPP 32
+
+typedef struct dirent	t_dirent;
+typedef struct stat		t_stat;
 
 typedef struct		s_file
 {
 	char			*name;
-	struct t_file	*left;	
-	struct t_file	*right;	
+	t_stat			info;
+	struct s_file	*left;	
+	struct s_file	*right;	
 }					t_file;
+
+void	set_lsflags(unsigned int *flags, char *s);
+int		is_lsflag(unsigned int *flags, char c);
+
+void	print_ls(unsigned int flags, t_file *file);
+
+t_file	*new_node(char *name);
+t_file	*insert_ascii(t_file *root, t_file *new_node);
+t_file	*insert_time(t_file *root, t_file *new_node);
+void	inorder(t_file *root);
+void	revorder(t_file *root);
 
 # endif

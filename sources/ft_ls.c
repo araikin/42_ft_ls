@@ -6,60 +6,73 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/15 16:38:29 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/16 11:33:20 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
 
-void	init_flags(t_flags *f)
+int		check_dir(unsigned int flags, t_dirent *dp)
 {
-	f->a_lower = 0;
-	f->l_lower = 0;
-	f->t_lower = 0;
-	f->r_lower = 0;
-	f->r_upper = 0;
+	if (flags & A_UPP && !(flags & A_LOW))
+	{
+		if (!ft_strcmp(dp->d_name, ".") || !ft_strcmp(dp->d_name, ".."))
+			return (0);
+		return (1);
+	}
+	else if (!(flags & A_LOW))
+	{
+		if (dp->d_name[0] == '.')
+			return (0);
+		return (1);
+	}
+	return (1);
 }
 
-void	ft_ls(t_flags *flags, char *name)
-{
-	DIR				*dir;
-	struct dirent	*dp;
 
-	if ((dir = opendir(".")) == NULL)
-	{
-		perror("Cannot open .");
-		exit(1);
-	}
-	while ((dp = readdir(dir)) != NULL)
-		ft_printf("%s\t%u\n", (*dp).d_name, (unsigned int)(*dp).d_type);
+void	set_dirinfo(unsigned int flags, t_file **file, char *name)
+{
+	DIR			*dir;
+	t_dirent	*dp;
+
+	dir = opendir(name);
+	while ((dp = readdir(dir)))
+		if (check_dir(flags, dp))
+			*file = flags & T_LOW ? insert_time(*file, new_node(dp->d_name)) :
+				insert_ascii(*file, new_node(dp->d_name));
+	closedir(dir);
 }
 
-int		set_flags(t_flags *flags, char *s)
+void	ft_ls(unsigned int flags, char *name)
 {
-	int	i;
+	t_file	*file;
+	t_file	*tmp;
 
-	i = 0;
-	while (s[++i])
+	file = NULL;
+	set_dirinfo(flags, &file, name);
+	print_ls(flags, file);
+	tmp = file;
+	/*
+	if (flags & R_UPP)
 	{
-		if (!is_lsflag(s[i]))
-			return (i)
+		while (tmp)
+		{
+			ft_ls_recur(flags, tmp, name);
+		}
 	}
-
+	*/
 }
 
 int		main(int ac, char **av)
 {
-	t_flags	flags;
-	int		i;
+	int				i;
+	unsigned int	flags;
 
+	(void)ac;
 	i = 1;
-	ft_bzero(&flags, sizeof(t_flags));
-	if (ac > 1)
-		if (av[1][0] == '-')
-			i += set_flags(&flags, av[1]);
-	if (av[i] == NULL)
-		ft_ls(&flags, ft_strdup("."));
+	while (av[i] && av[i][0] == '-')
+		set_lsflags(&flags, av[i++]);
+	ft_ls(flags, av[i] ? av[i] : ".");
 	/*
 	else
 		ft_ls_param(&flags, av + i);
