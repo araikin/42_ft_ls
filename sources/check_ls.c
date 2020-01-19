@@ -1,31 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_ls.c                                         :+:      :+:    :+:   */
+/*   check_ls.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/17 15:40:32 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/17 15:40:33 by asultanb         ###   ########.fr       */
+/*   Created: 2020/01/18 16:42:07 by asultanb          #+#    #+#             */
+/*   Updated: 2020/01/18 16:42:09 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
 
-void	print_table(unsigned int flags, t_file *file)
+int     is_dir(char *arg)
 {
-	(void)flags;
-	(void)file;
+    t_stat  checkdir;
 
-	ft_printf("test\n");
+    if (lstat(arg, &checkdir))    
+        return (0);
+    if (!(S_ISDIR(checkdir.st_mode)))
+        return (0);
+    return (1);
 }
 
-void	print_ls(unsigned int flags, t_file *file)
+int     is_file(char *arg)
 {
-	if (flags & L_LOW)
-		print_table(flags, file);
-	else if (flags & R_LOW)
-		revorder(file);
-	else
-		inorder(file);
+    t_stat  checkfile;
+
+    if (lstat(arg, &checkfile))
+        return (-1); 
+    if (!(S_ISDIR(checkfile.st_mode)))
+        return (1);
+    return (0);
 }

@@ -43,24 +43,21 @@ void	set_dirinfo(unsigned int flags, t_file **file, char *name)
 	closedir(dir);
 }
 
-void	ft_ls(unsigned int flags, char *name)
+void	ft_ls(unsigned int flags)
 {
 	t_file	*file;
-	t_file	*tmp;
 
 	file = NULL;
-	set_dirinfo(flags, &file, name);
+	set_dirinfo(flags, &file, ".");
 	print_ls(flags, file);
-	tmp = file;
-	/*
-	if (flags & R_UPP)
+}
+
+void	ft_ls_arg(unsigned int flags, char *arg)
+{
+	if (is_dir(arg))
 	{
-		while (tmp)
-		{
-			ft_ls_recur(flags, tmp, name);
-		}
+
 	}
-	*/
 }
 
 int		main(int ac, char **av)
@@ -72,10 +69,10 @@ int		main(int ac, char **av)
 	i = 1;
 	while (av[i] && av[i][0] == '-')
 		set_lsflags(&flags, av[i++]);
-	ft_ls(flags, av[i] ? av[i] : ".");
-	/*
+	if (av[i] == NULL)
+		ft_ls(flags);
 	else
-		ft_ls_param(&flags, av + i);
-		*/
+		while (av[i])
+			ft_ls_arg(flags, ft_strdup(av[i++]));
 	return (0);
 }

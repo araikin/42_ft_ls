@@ -53,4 +53,6 @@ t_file	*insert_time(t_file *root, t_file *new_node);
 void	inorder(t_file *root);
 void	revorder(t_file *root);
 
+int     is_dir(char *arg);
+int     is_file(char *arg);
 # endif

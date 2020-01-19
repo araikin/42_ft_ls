@@ -15,14 +15,14 @@
 t_file	*new_node(char *name)
 {
 	t_file	*new_node;
-	t_stat	info;
+	//t_stat	info;hh6h
 
 	if (!(new_node = (t_file *)malloc(sizeof(t_file))))
 		return (NULL);
-	if (stat(name, &info) == -1)
+	if (lstat(name, &new_node->info) == -1)
 		exit(1);
 	new_node->name = name;
-	new_node->info = info;
+	// new_node->info = info;
 	new_node->left = NULL;
 	new_node->right = NULL;
 	return (new_node);
@@ -33,7 +33,7 @@ void	revorder(t_file *root)
 	if (root != NULL)	
 	{
 		revorder(root->right);
-		printf("%s\n", root->name);
+		ft_printf("%s\n", root->name);
 		revorder(root->left);
 	}
 }
@@ -43,39 +43,10 @@ void	inorder(t_file *root)
 	if (root != NULL)
 	{
 		inorder(root->left);
-		printf("%s\n", root->name);
+		ft_printf("%s\n", root->name);
 		inorder(root->right);
 	}
 }
-
-/*
-t_file	*insert_ascii(t_file *node, char *name)
-{
-	if (node == NULL)	
-		return (new_node(name));
-	if (ft_strcmp(node->name, name) > 0)
-		node->left = insert(node->left, name);
-	else
-		node->right = insert(node->right, name);
-	return (node);
-}
-
-t_file	*insert_time(t_file *node, char *name)
-{
-	t_stat	*info;
-
-	lstat(node->name, &info);
-
-	if (node == NULL)	
-		return (new_node(name));
-	if (name.info->)
-	if (ft_strcmp(node->name, name) > 0)
-		node->left = insert(node->left, name);
-	else
-		node->right = insert(node->right, name);
-	return (node);
-}
-*/
 
 t_file	*insert_time(t_file *root, t_file *new_node)
 {
