@@ -12,67 +12,59 @@
 
 #include "../includes/ft_ls.h"
 
-int		check_dir(unsigned int flags, t_dirent *dp)
-{
-	if (flags & A_UPP && !(flags & A_LOW))
-	{
-		if (!ft_strcmp(dp->d_name, ".") || !ft_strcmp(dp->d_name, ".."))
-			return (0);
-		return (1);
-	}
-	else if (!(flags & A_LOW))
-	{
-		if (dp->d_name[0] == '.')
-			return (0);
-		return (1);
-	}
-	return (1);
-}
-
-
-void	set_dirinfo(unsigned int flags, t_file **file, char *name)
-{
-	DIR			*dir;
-	t_dirent	*dp;
-
-	dir = opendir(name);
-	while ((dp = readdir(dir)))
-		if (check_dir(flags, dp))
-			*file = flags & T_LOW ? insert_time(*file, new_node(dp->d_name)) :
-				insert_ascii(*file, new_node(dp->d_name));
-	closedir(dir);
-}
-
-void	ft_ls(unsigned int flags)
-{
-	t_file	*file;
-
-	file = NULL;
-	set_dirinfo(flags, &file, ".");
-	print_ls(flags, file);
-}
-
-void	ft_ls_arg(unsigned int flags, char *arg)
-{
-	if (is_dir(arg))
-	{
-
-	}
-}
-
 int		main(int ac, char **av)
 {
 	int				i;
 	unsigned int	flags;
 
-	(void)ac;
 	i = 1;
-	while (av[i] && av[i][0] == '-')
+	while (av[i] && av[i][0] == '-' && ac--)
 		set_lsflags(&flags, av[i++]);
 	if (av[i] == NULL)
-		ft_ls(flags);
+		ft_ls_no_arg(flags);
+	else if (ac == 2)
+		ft_ls_single_arg(flags, av[i]);
+	/*
 	else
-		while (av[i])
-			ft_ls_arg(flags, ft_strdup(av[i++]));
+		ft_ls_arg(flags, &av[i]);
+		*/
 	return (0);
+}
+
+void	ft_ls_no_arg(unsigned int flags)
+{
+	t_file	*file;
+
+	file = NULL;
+	set_dirinfo(flags, &file, ".");
+	print_ls(flags, file, ".");
+}
+
+void	ft_ls_single_arg(unsigned int flags, char *arg)
+{
+	t_file	*file;
+
+	file = NULL;
+	if (is_file(arg))
+		ft_printf("%s\n", arg);
+	else if (is_dir(arg))
+		set_dirinfo(flags, &file, arg);
+	print_ls(flags, file, arg);
+}
+
+void	ft_ls_arg(unsigned int flags, char **args)
+{
+	t_file	*file_arg;
+	t_file	*dir_arg;
+
+	file_arg = NULL;
+	dir_arg = NULL;
+	check_args(flags, args);
+	/*
+	if (is_dir(arg))
+	{
+		set_dirinfo(flags, &file, arg);
+		print_ls(flags, file);
+	}
+	*/
 }

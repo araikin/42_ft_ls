@@ -12,40 +12,40 @@
 
 #include "../includes/ft_ls.h"
 
-t_file	*new_node(char *name)
+t_file	*new_node(char *name, char *path)
 {
 	t_file	*new_node;
-	//t_stat	info;hh6h
+	char	*tmp;
+	int		res;
 
 	if (!(new_node = (t_file *)malloc(sizeof(t_file))))
 		return (NULL);
-	if (lstat(name, &new_node->info) == -1)
-		exit(1);
-	new_node->name = name;
-	// new_node->info = info;
+	tmp = (path[ft_strlen(path) - 1] == '/') ? ft_strjoin(path, name) :
+		ft_strcjoin(path, '/', name);
+	res = lstat(tmp, &new_node->info);
+	free(tmp);
+	if (res == -1)
+	{
+		free(new_node);
+		return (NULL);
+	}
+	new_node->name = ft_strdup(name);
 	new_node->left = NULL;
 	new_node->right = NULL;
 	return (new_node);
 }
 
-void	revorder(t_file *root)
+void	set_dirinfo(unsigned int flags, t_file **file, char *arg)
 {
-	if (root != NULL)	
-	{
-		revorder(root->right);
-		ft_printf("%s\n", root->name);
-		revorder(root->left);
-	}
-}
+	DIR			*dir;
+	t_dirent	*dp;
 
-void	inorder(t_file *root)
-{
-	if (root != NULL)
-	{
-		inorder(root->left);
-		ft_printf("%s\n", root->name);
-		inorder(root->right);
-	}
+	dir = opendir(arg);
+	while ((dp = readdir(dir)))
+		if (check_dir(flags, dp))
+			*file = (flags & T_LOW) ? insert_time(*file, new_node(dp->d_name, arg)) :
+				insert_ascii(*file, new_node(dp->d_name, arg));
+	closedir(dir);
 }
 
 t_file	*insert_time(t_file *root, t_file *new_node)
