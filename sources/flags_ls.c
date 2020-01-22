@@ -12,6 +12,16 @@
 
 #include "../includes/ft_ls.h"
 
+void	set_lsflags(unsigned int *flags, char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[++i])
+		if (!is_lsflag(flags, s[i]))
+			ft_printf("illegal flag: %c\n", s[i]);
+}
+
 int		is_lsflag(unsigned int *flags, char c)
 {
 	if (c == 'a')		
@@ -29,14 +39,4 @@ int		is_lsflag(unsigned int *flags, char c)
 	else
 		return (0);
 	return (1);
-}
-
-void	set_lsflags(unsigned int *flags, char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[++i])
-		if (!is_lsflag(flags, s[i]))
-			ft_printf("illegal flag: %c\n", s[i]);
 }

@@ -6,12 +6,11 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/18 16:42:07 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/18 16:42:09 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/21 16:21:50 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
-
 int     is_dir(char *arg)
 {
     t_stat  checkdir;
@@ -51,7 +50,20 @@ int		check_dir(unsigned int flags, t_dirent *dp)
 	return (1);
 }
 
-void	check_args(unsigned int flags, char **arg)
+void	sort_args(char **args)
 {
-		
+	char	*tmp;
+	int		i;
+
+	i = -1;
+	while (args[++i + 1])
+	{
+		if (ft_strcmp(args[i], args[i + 1]) > 0)
+		{
+			tmp = args[i];
+			args[i] = args[i + 1];
+			args[i + 1] = tmp;
+			i = -1;
+		}
+	}
 }

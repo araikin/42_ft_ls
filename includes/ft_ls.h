@@ -44,6 +44,8 @@ typedef struct		s_file
 
 void	ft_ls_no_arg(unsigned int flags);
 void	ft_ls_single_arg(unsigned int flags, char *arg);
+void	ft_ls_arg(unsigned int flags, char **args);
+
 void	set_lsflags(unsigned int *flags, char *s);
 int		is_lsflag(unsigned int *flags, char c);
 
@@ -52,7 +54,8 @@ void	inorder(t_file *root);
 void	revorder(t_file *root);
 void	print_table(unsigned int flags, t_file *file);
 
-	void set_dirinfo(unsigned int flags, t_file **file, char *arg);
+void	set_dirinfo(unsigned int flags, t_file **file, char *arg);
+void	process_args(unsigned int flags, t_file *d, char *path, int n);
 t_file	*new_node(char *name, char *path);
 t_file	*insert_ascii(t_file *root, t_file *new_node);
 t_file	*insert_time(t_file *root, t_file *new_node);
@@ -60,7 +63,7 @@ t_file	*insert_time(t_file *root, t_file *new_node);
 
 int     is_dir(char *arg);
 int     is_file(char *arg);
-void	check_args(unsigned int flags, char **args);
 int		check_dir(unsigned int flags, t_dirent *dp);
+void	sort_args(char **args);
 
 # endif
