@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
+
 int     is_dir(char *arg)
 {
     t_stat  checkdir;

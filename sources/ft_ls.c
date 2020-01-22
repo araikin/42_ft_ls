@@ -35,7 +35,7 @@ void	ft_ls_no_arg(unsigned int flags)
 
 	file = NULL;
 	set_dirinfo(flags, &file, ".");
-	print_ls(flags, file, ".");
+	print_ls(flags, file);
 }
 
 void	ft_ls_single_arg(unsigned int flags, char *arg)
@@ -47,7 +47,7 @@ void	ft_ls_single_arg(unsigned int flags, char *arg)
 		ft_printf("%s\n", arg);
 	else if (is_dir(arg))
 		set_dirinfo(flags, &file, arg);
-	print_ls(flags, file, arg);
+	print_ls(flags, file);
 }
 
 void	ft_ls_arg(unsigned int flags, char **args)
@@ -71,6 +71,6 @@ void	ft_ls_arg(unsigned int flags, char **args)
 		else
 			exit(1);
 	}
-	print_ls(flags, f, NULL);
-	process_args(flags, d, NULL, 1);
+	print_ls(flags, f);
+	process_args(flags, d, 1);
 }

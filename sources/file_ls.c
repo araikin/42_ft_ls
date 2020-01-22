@@ -53,19 +53,19 @@ void	set_dirinfo(unsigned int flags, t_file **file, char *arg)
 	closedir(dir);
 }
 
-void	process_args(unsigned int flags, t_file *d, char *path, int n)
+void	process_args(unsigned int flags, t_file *d, int n)
 {
 	t_file	*new;
 
 	new = NULL;
 	if (d != NULL)
 	{
-		process_args(flags, d->left, path, n + 1);
+		process_args(flags, d->left, n + 1);
 		n > 0 ? ft_printf("\n") : ft_printf("");
 		ft_printf("%s:\n", d->name);
 		set_dirinfo(flags, &new, d->name);
-		print_ls(flags, new, NULL);
-		process_args(flags, d->right, path, n + 1);
+		print_ls(flags, new);
+		process_args(flags, d->right, n + 1);
 	}
 }
 

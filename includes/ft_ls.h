@@ -49,17 +49,16 @@ void	ft_ls_arg(unsigned int flags, char **args);
 void	set_lsflags(unsigned int *flags, char *s);
 int		is_lsflag(unsigned int *flags, char c);
 
-void	print_ls(unsigned int flags, t_file *file, char *path);
-void	inorder(t_file *root);
-void	revorder(t_file *root);
-void	print_table(unsigned int flags, t_file *file);
+void    parse_time(time_t mod_time);
+void	print_ls(unsigned int flags, t_file *file);
+void	inorder(unsigned int flags, t_file *root);
+void	revorder(unsigned int flags, t_file *root);
 
 void	set_dirinfo(unsigned int flags, t_file **file, char *arg);
-void	process_args(unsigned int flags, t_file *d, char *path, int n);
+void	process_args(unsigned int flags, t_file *d, int n);
 t_file	*new_node(char *name, char *path);
 t_file	*insert_ascii(t_file *root, t_file *new_node);
 t_file	*insert_time(t_file *root, t_file *new_node);
-
 
 int     is_dir(char *arg);
 int     is_file(char *arg);
