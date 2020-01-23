@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/22 17:08:30 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/22 17:31:43 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int		main(int ac, char **av)
 {
-	int			i;
-	uint8_t		flags;
+	int		i;
+	uint8_t	flags;
 	t_wid	wid;
 
 	i = 1;

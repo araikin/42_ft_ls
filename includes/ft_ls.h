@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 12:48:03 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/22 17:06:38 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/22 17:32:20 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ void					set_lsflags(uint8_t *flags, char *s);
 int						is_lsflag(uint8_t *flags, char c);
 
 void					set_info(uint8_t flags, t_file **file, char *arg);
-void					process_args(uint8_t flags, t_file *d, int n, t_wid *wid);
+void					process_args(uint8_t flags, t_file *d, int n,
+						t_wid *wid);
 t_file					*new_node(char *name, char *path);
 t_file					*insert_ascii(t_file *root, t_file *new_node);
 t_file					*insert_time(t_file *root, t_file *new_node);
