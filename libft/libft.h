@@ -61,12 +61,14 @@ int					clear_format(t_format *data);
 t_format			*initialize_format(void);
 
 int					parse_format(va_list *argp, char *format, int *i);
-void				set_params(t_format *data, char *format, int *i);
+void				set_params(va_list *argp, t_format *data, char *format,
+								int *i);
 char				*get_all_params(char *format, int i);
 int					apply_params(va_list *argp, t_format *data);
 
 void				set_flags(char *params, t_format *data, int *pos);
-void				set_width(char *params, t_format *data, int *pos);
+void				set_width(va_list *argp, char *params, t_format *data,
+								int *pos);
 void				set_precision(char *params, t_format *data, int *pos);
 void				set_length(char *params, t_format *data, int *pos);
 void				set_specifier(char *params, t_format *data, int *pos);
@@ -141,6 +143,7 @@ int					ft_isascii(int c);
 int					ft_isprint(int c);
 int					ft_toupper(int c);
 int					ft_tolower(int c);
+int					ft_digitcnt(int n);
 
 void				*ft_memalloc(size_t size);
 void				ft_memdel(void **ap);

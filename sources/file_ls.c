@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 11:07:53 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/17 11:07:56 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/22 17:07:46 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,44 +40,54 @@ t_file	*new_node(char *name, char *path)
 	return (new_node);
 }
 
-void	set_dirinfo(unsigned int flags, t_file **file, char *arg)
+void	set_info(uint8_t flags, t_file **file, char *arg)
 {
 	DIR			*dir;
 	t_dirent	*dp;
 
-	dir = opendir(arg);
-	while ((dp = readdir(dir)))
-		if (check_dir(flags, dp))
-			*file = (flags & T_LOW) ? insert_time(*file, new_node(dp->d_name, arg)) :
+	dir = NULL;
+	dp = NULL;
+	if (is_file(arg))
+		*file = (flags & T_LOW) ?
+			insert_time(*file, new_node(arg, NULL)) :
+			insert_ascii(*file, new_node(arg, NULL));
+	else
+	{
+		dir = opendir(arg);
+		while ((dp = readdir(dir)))
+			if (check_dir(flags, dp))
+				*file = (flags & T_LOW) ?
+				insert_time(*file, new_node(dp->d_name, arg)) :
 				insert_ascii(*file, new_node(dp->d_name, arg));
-	closedir(dir);
+		closedir(dir);
+	}
 }
 
-void	process_args(unsigned int flags, t_file *d, int n)
+void	process_args(uint8_t flags, t_file *d, int n, t_wid *wid)
 {
 	t_file	*new;
 
 	new = NULL;
 	if (d != NULL)
 	{
-		process_args(flags, d->left, n + 1);
+		process_args(flags, d->left, n + 1, wid);
 		n > 0 ? ft_printf("\n") : ft_printf("");
 		ft_printf("%s:\n", d->name);
-		set_dirinfo(flags, &new, d->name);
-		print_ls(flags, new);
-		process_args(flags, d->right, n + 1);
+		set_info(flags, &new, d->name);
+		print_ls(flags, new, wid);
+		process_args(flags, d->right, n + 1, wid);
 	}
 }
 
 t_file	*insert_time(t_file *root, t_file *new_node)
 {
 	if (root == NULL)
-		return (new_node);	
+		return (new_node);
 	if (root->info.st_mtime < new_node->info.st_mtime)
 		root->left = insert_time(root->left, new_node);
 	else
 		root->right = insert_time(root->right, new_node);
-	return (root);	
+	return (root);
 }
 
 t_file	*insert_ascii(t_file *root, t_file *new_node)

@@ -6,13 +6,13 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 15:37:53 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/17 15:37:56 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/22 17:08:13 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
 
-void	set_lsflags(unsigned int *flags, char *s)
+void	set_lsflags(uint8_t *flags, char *s)
 {
 	int	i;
 
@@ -22,9 +22,9 @@ void	set_lsflags(unsigned int *flags, char *s)
 			ft_printf("illegal flag: %c\n", s[i]);
 }
 
-int		is_lsflag(unsigned int *flags, char c)
+int		is_lsflag(uint8_t *flags, char c)
 {
-	if (c == 'a')		
+	if (c == 'a')
 		*flags = *flags | A_LOW;
 	else if (c == 'A')
 		*flags = *flags | A_UPP;

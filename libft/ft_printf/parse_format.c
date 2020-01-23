@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 t_specifiers	*g_dispatch[] = {
 	handle_c,
@@ -37,7 +37,7 @@ int		parse_format(va_list *argp, char *format, int *len)
 	if (!(data = initialize_format()))
 		return (0);
 	*len += 1;
-	set_params(data, format, len);
+	set_params(argp, data, format, len);
 	if (data->spec == '\0')
 		return (clear_format(data));
 	n = apply_params(argp, data);
@@ -45,7 +45,7 @@ int		parse_format(va_list *argp, char *format, int *len)
 	return (n);
 }
 
-void	set_params(t_format *data, char *format, int *len)
+void	set_params(va_list *argp, t_format *data, char *format, int *len)
 {
 	char	*params;
 	int		pos;
@@ -53,7 +53,7 @@ void	set_params(t_format *data, char *format, int *len)
 	pos = 0;
 	params = get_all_params(format, *len);
 	set_flags(params, data, &pos);
-	set_width(params, data, &pos);
+	set_width(argp, params, data, &pos);
 	set_precision(params, data, &pos);
 	set_length(params, data, &pos);
 	set_specifier(params, data, &pos);

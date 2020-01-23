@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 void	set_flags(char *params, t_format *data, int *pos)
 {
@@ -30,15 +30,23 @@ void	set_flags(char *params, t_format *data, int *pos)
 	}
 }
 
-void	set_width(char *params, t_format *data, int *pos)
+void	set_width(va_list *argp, char *params, t_format *data, int *pos)
 {
 	int	width;
 
 	width = 0;
-	while (params[*pos] && is_digit(params[*pos]))
+	if (params[*pos] == '*')
 	{
-		width = width * 10 + params[*pos] - '0';
+		width = va_arg(*argp, int);
 		*pos += 1;
+	}
+	else
+	{
+		while (params[*pos] && is_digit(params[*pos]))
+		{
+			width = width * 10 + params[*pos] - '0';
+			*pos += 1;
+		}
 	}
 	data->width = width;
 }

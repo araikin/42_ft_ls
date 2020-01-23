@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/16 11:33:20 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/22 17:08:30 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,43 +14,56 @@
 
 int		main(int ac, char **av)
 {
-	int				i;
-	unsigned int	flags;
+	int			i;
+	uint8_t		flags;
+	t_wid	wid;
 
 	i = 1;
+	ft_bzero(&wid, sizeof(t_wid));
 	while (av[i] && av[i][0] == '-' && ac--)
 		set_lsflags(&flags, av[i++]);
 	if (av[i] == NULL)
-		ft_ls_no_arg(flags);
+		ft_ls_no_arg(flags, &wid);
 	else if (ac == 2)
-		ft_ls_single_arg(flags, av[i]);
+		ft_ls_single_arg(flags, av[i], &wid);
 	else
-		ft_ls_arg(flags, &av[i]);
+	{
+		sort_args(&av[i]);
+		ft_ls_arg(flags, &av[i], &wid);
+	}
 	return (0);
 }
 
-void	ft_ls_no_arg(unsigned int flags)
+void	ft_ls_no_arg(uint8_t flags, t_wid *wid)
 {
 	t_file	*file;
 
 	file = NULL;
-	set_dirinfo(flags, &file, ".");
-	print_ls(flags, file);
+	set_info(flags, &file, ".");
+	if (flags & L_LOW)
+		handle_width(flags, file, wid);
+	print_ls(flags, file, wid);
+	free(file);
 }
 
-void	ft_ls_single_arg(unsigned int flags, char *arg)
+void	ft_ls_single_arg(uint8_t flags, char *arg, t_wid *wid)
 {
 	t_file	*file;
 
 	file = NULL;
-	if (is_file(arg))
-		ft_printf("%s\n", arg);
-	else if (is_dir(arg))
-		set_dirinfo(flags, &file, arg);
-	print_ls(flags, file);
+	set_info(flags, &file, arg);
+	if (flags & L_LOW)
+	{
+		if (is_dir(arg))
+			handle_width(flags, file, wid);
+		else
+			set_widwid(file, wid);
+	}
+	print_ls(flags, file, wid);
+	free(file);
 }
 
-void	ft_ls_arg(unsigned int flags, char **args)
+void	ft_ls_arg(uint8_t flags, char **args, t_wid *wid)
 {
 	t_file	*f;
 	t_file	*d;
@@ -59,18 +72,22 @@ void	ft_ls_arg(unsigned int flags, char **args)
 	f = NULL;
 	d = NULL;
 	i = -1;
-	sort_args(args);
 	while (args[++i])
 	{
 		if (is_dir(args[i]))
-			d = (flags & T_LOW) ? insert_time(d, new_node(args[i], NULL)) : 
+			d = (flags & T_LOW) ? insert_time(d, new_node(args[i], NULL)) :
 				insert_ascii(d, new_node(args[i], NULL));
 		else if (is_file(args[i]))
-			f = (flags & T_LOW) ? insert_time(f, new_node(args[i], NULL)) : 
-				insert_ascii(f, new_node(args[i], NULL));	
+			f = (flags & T_LOW) ? insert_time(f, new_node(args[i], NULL)) :
+				insert_ascii(f, new_node(args[i], NULL));
 		else
 			exit(1);
 	}
-	print_ls(flags, f);
-	process_args(flags, d, 1);
+	if (flags & L_LOW)
+	{
+		set_widwid(f, wid);
+		handle_width(flags, d, wid);
+	}
+	print_ls(flags, f, wid);
+	process_args(flags, d, (f == NULL) ? 0 : 1, wid);
 }
