@@ -29,7 +29,7 @@ int		main(int ac, char **av)
 	else
 	{
 		sort_args(&av[i]);
-		ft_ls_arg(flags, &av[i], &wid);
+		ft_ls_args(flags, &av[i], &wid);
 	}
 	return (0);
 }
@@ -43,7 +43,7 @@ void	ft_ls_no_arg(uint8_t flags, t_wid *wid)
 	if (flags & L_LOW)
 		handle_width(flags, file, wid);
 	print_ls(flags, file, wid);
-	free(file);
+	destroy_file(file);
 }
 
 void	ft_ls_single_arg(uint8_t flags, char *arg, t_wid *wid)
@@ -57,13 +57,13 @@ void	ft_ls_single_arg(uint8_t flags, char *arg, t_wid *wid)
 		if (is_dir(arg))
 			handle_width(flags, file, wid);
 		else
-			set_widwid(file, wid);
+			set_wid(file, wid);
 	}
 	print_ls(flags, file, wid);
-	free(file);
+	destroy_file(file);
 }
 
-void	ft_ls_arg(uint8_t flags, char **args, t_wid *wid)
+void	ft_ls_args(uint8_t flags, char **args, t_wid *wid)
 {
 	t_file	*f;
 	t_file	*d;
@@ -85,9 +85,11 @@ void	ft_ls_arg(uint8_t flags, char **args, t_wid *wid)
 	}
 	if (flags & L_LOW)
 	{
-		set_widwid(f, wid);
+		set_wid(f, wid);
 		handle_width(flags, d, wid);
 	}
 	print_ls(flags, f, wid);
-	process_args(flags, d, (f == NULL) ? 0 : 1, wid);
+	proc_args(flags, d, (f == NULL) ? 0 : 1, wid);
+	destroy_file(f);
+	destroy_file(d);
 }

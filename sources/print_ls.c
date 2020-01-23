@@ -45,3 +45,5 @@ void	inorder(uint8_t flags, t_file *root, t_wid *wid)
 		inorder(flags, root->right, wid);
 	}
 }
+
+

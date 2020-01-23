@@ -37,6 +37,7 @@ t_file	*new_node(char *name, char *path)
 	new_node->name = ft_strdup(name);
 	new_node->left = NULL;
 	new_node->right = NULL;
+	new_node->total += new_node->info.st_blocks;
 	return (new_node);
 }
 
@@ -48,9 +49,10 @@ void	set_info(uint8_t flags, t_file **file, char *arg)
 	dir = NULL;
 	dp = NULL;
 	if (is_file(arg))
-		*file = (flags & T_LOW) ?
-			insert_time(*file, new_node(arg, NULL)) :
+	{
+		*file = (flags & T_LOW) ? insert_time(*file, new_node(arg, NULL)) :
 			insert_ascii(*file, new_node(arg, NULL));
+	}
 	else
 	{
 		dir = opendir(arg);
@@ -63,20 +65,22 @@ void	set_info(uint8_t flags, t_file **file, char *arg)
 	}
 }
 
-void	process_args(uint8_t flags, t_file *d, int n, t_wid *wid)
+void	proc_args(uint8_t flags, t_file *d, int n, t_wid *wid)
 {
 	t_file	*new;
 
 	new = NULL;
 	if (d != NULL)
 	{
-		process_args(flags, d->left, n + 1, wid);
+		proc_args(flags, d->left, n + 1, wid);
 		n > 0 ? ft_printf("\n") : ft_printf("");
 		ft_printf("%s:\n", d->name);
 		set_info(flags, &new, d->name);
+		ft_printf("total %d\n", new->total);
 		print_ls(flags, new, wid);
-		process_args(flags, d->right, n + 1, wid);
+		proc_args(flags, d->right, n + 1, wid);
 	}
+	destroy_file(new);
 }
 
 t_file	*insert_time(t_file *root, t_file *new_node)

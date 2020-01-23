@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   l_print_ls.c                                       :+:      :+:    :+:   */
+/*   low_l_ls.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -21,17 +21,17 @@ void	handle_width(uint8_t flags, t_file *d, t_wid *wid)
 	{
 		handle_width(flags, d->left, wid);
 		set_info(flags, &new, d->name);
-		set_widwid(d, wid);
+		set_wid(d, wid);
 		handle_width(flags, d->right, wid);
 	}
-	free(new);
+	destroy_file(new);
 }
 
-void	set_widwid(t_file *root, t_wid *wid)
+void	set_wid(t_file *root, t_wid *wid)
 {
 	if (root != NULL)
 	{
-		set_widwid(root->left, wid);
+		set_wid(root->left, wid);
 		if (wid->links < ft_digitcnt((int)root->info.st_nlink))
 			wid->links = ft_digitcnt((int)root->info.st_nlink);
 		if (wid->uid < (int)ft_strlen(getpwuid(root->info.st_uid)->pw_name))
@@ -40,7 +40,7 @@ void	set_widwid(t_file *root, t_wid *wid)
 			wid->gid = (int)ft_strlen(getgrgid(root->info.st_gid)->gr_name);
 		if (wid->size < ft_digitcnt((int)root->info.st_size))
 			wid->size = ft_digitcnt((int)root->info.st_size);
-		set_widwid(root->right, wid);
+		set_wid(root->right, wid);
 	}
 }
 
@@ -57,7 +57,7 @@ void	print_l_low(t_file *root, t_wid *wid)
 			root->info.st_mode & S_IROTH ? 'r' : '-',
 			root->info.st_mode & S_IWOTH ? 'w' : '-',
 			root->info.st_mode & S_IXOTH ? 'x' : '-');
-	ft_printf("%*d %*s  %*s  %*d ",
+	ft_printf("%*d %-*s  %-*s  %*d ",
 			wid->links, root->info.st_nlink,
 			wid->uid, (getpwuid(root->info.st_uid))->pw_name,
 			wid->gid, (getgrgid(root->info.st_gid))->gr_name,
