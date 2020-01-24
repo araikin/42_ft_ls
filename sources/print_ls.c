@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 15:40:32 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/22 17:10:55 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/23 17:44:11 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	print_ls(uint8_t flags, t_file *file, t_wid *wid)
 {
+	if (flags & L_LOW)
+		ft_printf("total %d\n", file->total);
 	if (flags & R_LOW)
 		revorder(flags, file, wid);
 	else

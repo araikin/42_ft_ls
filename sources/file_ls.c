@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 11:07:53 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/22 17:07:46 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/23 17:49:06 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,22 +45,27 @@ void	set_info(uint8_t flags, t_file **file, char *arg)
 {
 	DIR			*dir;
 	t_dirent	*dp;
+	t_file		*node;
 
 	dir = NULL;
 	dp = NULL;
+	node = NULL;
 	if (is_file(arg))
-	{
 		*file = (flags & T_LOW) ? insert_time(*file, new_node(arg, NULL)) :
 			insert_ascii(*file, new_node(arg, NULL));
-	}
 	else
 	{
 		dir = opendir(arg);
 		while ((dp = readdir(dir)))
+		{
 			if (check_dir(flags, dp))
-				*file = (flags & T_LOW) ?
-				insert_time(*file, new_node(dp->d_name, arg)) :
-				insert_ascii(*file, new_node(dp->d_name, arg));
+			{
+				node = new_node(dp->d_name, arg);
+				*file = (flags & T_LOW) ? insert_time(*file, node) :
+					insert_ascii(*file, node);
+			}
+			(*file)->total += node->info.st_blocks;
+		}
 		closedir(dir);
 	}
 }
@@ -76,7 +81,6 @@ void	proc_args(uint8_t flags, t_file *d, int n, t_wid *wid)
 		n > 0 ? ft_printf("\n") : ft_printf("");
 		ft_printf("%s:\n", d->name);
 		set_info(flags, &new, d->name);
-		ft_printf("total %d\n", new->total);
 		print_ls(flags, new, wid);
 		proc_args(flags, d->right, n + 1, wid);
 	}
