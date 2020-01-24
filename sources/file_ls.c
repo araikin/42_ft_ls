@@ -12,7 +12,7 @@
 
 #include "../includes/ft_ls.h"
 
-t_file	*new_node(char *name, char *path)
+t_file	*new_node(char *name, char *path, int *total)
 {
 	t_file	*new_node;
 	char	*tmp;
@@ -22,8 +22,8 @@ t_file	*new_node(char *name, char *path)
 		return (NULL);
 	if (path)
 	{
-		tmp = (path[ft_strlen(path) - 1] == '/') ? ft_strjoin(path, name) :
-			ft_strcjoin(path, '/', name);
+		tmp = (path[ft_strlen(path) - 1] == '/') ?
+			ft_strjoin(path, name) : ft_strcjoin(path, '/', name);
 		res = lstat(tmp, &new_node->info);
 		free(tmp);
 	}
@@ -37,7 +37,7 @@ t_file	*new_node(char *name, char *path)
 	new_node->name = ft_strdup(name);
 	new_node->left = NULL;
 	new_node->right = NULL;
-	new_node->total += new_node->info.st_blocks;
+	*total += new_node->info.st_blocks;
 	return (new_node);
 }
 
@@ -45,46 +45,28 @@ void	set_info(uint8_t flags, t_file **file, char *arg)
 {
 	DIR			*dir;
 	t_dirent	*dp;
-	t_file		*node;
+	int			total;
 
 	dir = NULL;
 	dp = NULL;
-	node = NULL;
+	total = 0;
 	if (is_file(arg))
-		*file = (flags & T_LOW) ? insert_time(*file, new_node(arg, NULL)) :
-			insert_ascii(*file, new_node(arg, NULL));
+		*file = (flags & T_LOW) ?
+			insert_time(*file, new_node(arg, NULL, &total)) :
+			insert_ascii(*file, new_node(arg, NULL, &total));
 	else
 	{
 		dir = opendir(arg);
 		while ((dp = readdir(dir)))
 		{
 			if (check_dir(flags, dp))
-			{
-				node = new_node(dp->d_name, arg);
-				*file = (flags & T_LOW) ? insert_time(*file, node) :
-					insert_ascii(*file, node);
-			}
-			(*file)->total += node->info.st_blocks;
+				*file = (flags & T_LOW) ?
+					insert_time(*file, new_node(dp->d_name, arg, &total)) :
+					insert_ascii(*file, new_node(dp->d_name, arg, &total));
 		}
 		closedir(dir);
 	}
-}
-
-void	proc_args(uint8_t flags, t_file *d, int n, t_wid *wid)
-{
-	t_file	*new;
-
-	new = NULL;
-	if (d != NULL)
-	{
-		proc_args(flags, d->left, n + 1, wid);
-		n > 0 ? ft_printf("\n") : ft_printf("");
-		ft_printf("%s:\n", d->name);
-		set_info(flags, &new, d->name);
-		print_ls(flags, new, wid);
-		proc_args(flags, d->right, n + 1, wid);
-	}
-	destroy_file(new);
+	(*file)->total = total;
 }
 
 t_file	*insert_time(t_file *root, t_file *new_node)

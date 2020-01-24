@@ -52,9 +52,13 @@ typedef struct			s_wid
 }						t_wid;
 
 /*******************	ft_ls.c		********************/
-void					ft_ls_no_arg(uint8_t flags, t_wid *wid);
-void					ft_ls_single_arg(uint8_t flags, char *arg, t_wid *wid);
-void					ft_ls_args(uint8_t flags, char **args, t_wid *wid);
+void					ft_ls_one_arg(uint8_t flags, char *arg, t_wid *wid);
+void					ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid);
+void					handle_dir(uint8_t flags, char **args, t_wid *wid, int check);
+
+/*******************	utils_ls.c		********************/
+void					set_wid(t_file *root, t_wid *wid);
+void					iterate_args(uint8_t flags, char **args, t_wid *wid);
 
 /*******************	flags_ls.c	********************/
 void					set_lsflags(uint8_t *flags, char *s);
@@ -62,8 +66,7 @@ int						is_lsflag(uint8_t *flags, char c);
 
 /*******************	file_ls.c	********************/
 void					set_info(uint8_t flags, t_file **file, char *arg);
-void					proc_args(uint8_t flags, t_file *d, int n, t_wid *wid);
-t_file					*new_node(char *name, char *path);
+t_file					*new_node(char *name, char *path, int *total);
 t_file					*insert_ascii(t_file *root, t_file *new_node);
 t_file					*insert_time(t_file *root, t_file *new_node);
 
@@ -74,13 +77,9 @@ int						check_dir(uint8_t flags, t_dirent *dp);
 void					sort_args(char **args);
 
 /*******************	print_ls.c	********************/
-void					print_ls(uint8_t flags, t_file *file, t_wid *wid);
+void					print_ls(uint8_t flags, t_file *file, t_wid *wid, int dir);
 void					revorder(uint8_t flags, t_file *root, t_wid *wid);
 void					inorder(uint8_t flags, t_file *root, t_wid *wid);
-
-/*******************	low_l_ls.c	********************/
-void					handle_width(uint8_t flags, t_file *d, t_wid *wid);
-void					set_wid(t_file *root, t_wid *wid);
 void					print_l_low(t_file *root, t_wid *wid);
 void					parse_time(time_t mod_time);
 

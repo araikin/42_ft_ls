@@ -22,74 +22,70 @@ int		main(int ac, char **av)
 	ft_bzero(&wid, sizeof(t_wid));
 	while (av[i] && av[i][0] == '-' && ac--)
 		set_lsflags(&flags, av[i++]);
-	if (av[i] == NULL)
-		ft_ls_no_arg(flags, &wid);
-	else if (ac == 2)
-		ft_ls_single_arg(flags, av[i], &wid);
+	if (ac == 2 || av[i] == NULL)
+		ft_ls_one_arg(flags, av[i] ? av[i] : ".", &wid);
 	else
-	{
-		sort_args(&av[i]);
-		ft_ls_args(flags, &av[i], &wid);
-	}
+		ft_ls_mul_args(flags, &av[i], &wid);
 	return (0);
 }
 
-void	ft_ls_no_arg(uint8_t flags, t_wid *wid)
-{
-	t_file	*file;
-
-	file = NULL;
-	set_info(flags, &file, ".");
-	if (flags & L_LOW)
-		handle_width(flags, file, wid);
-	print_ls(flags, file, wid);
-	destroy_file(file);
-}
-
-void	ft_ls_single_arg(uint8_t flags, char *arg, t_wid *wid)
+void	ft_ls_one_arg(uint8_t flags, char *arg, t_wid *wid)
 {
 	t_file	*file;
 
 	file = NULL;
 	set_info(flags, &file, arg);
 	if (flags & L_LOW)
-	{
-		if (is_dir(arg))
-			handle_width(flags, file, wid);
-		else
-			set_wid(file, wid);
-	}
-	print_ls(flags, file, wid);
+		set_wid(file, wid);
+	print_ls(flags, file, wid, is_dir(arg) ? 1 : 0);
 	destroy_file(file);
 }
 
-void	ft_ls_args(uint8_t flags, char **args, t_wid *wid)
+void	ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid)
 {
 	t_file	*f;
-	t_file	*d;
 	int		i;
+	int		check;
 
-	f = NULL;
-	d = NULL;
 	i = -1;
-	while (args[++i])
+	f = NULL;
+	check = 0;
+	sort_args(args);
+	while (args[++i])	
 	{
-		if (is_dir(args[i]))
-			d = (flags & T_LOW) ? insert_time(d, new_node(args[i], NULL)) :
-				insert_ascii(d, new_node(args[i], NULL));
-		else if (is_file(args[i]))
-			f = (flags & T_LOW) ? insert_time(f, new_node(args[i], NULL)) :
-				insert_ascii(f, new_node(args[i], NULL));
-		else
-			exit(1);
+		if (is_file(args[i]))
+			set_info(flags, &f, args[i]);
+		check++;
 	}
 	if (flags & L_LOW)
 	{
 		set_wid(f, wid);
-		handle_width(flags, d, wid);
+		iterate_args(flags, args, wid);
 	}
-	print_ls(flags, f, wid);
-	proc_args(flags, d, (f == NULL) ? 0 : 1, wid);
+	print_ls(flags, f, wid, 0);
 	destroy_file(f);
-	destroy_file(d);
+	handle_dir(flags, args, wid, check);
+}
+
+void	handle_dir(uint8_t flags, char **args, t_wid *wid, int check)
+{
+	t_file *f;
+	int		i;
+
+	i = -1;
+	while (args[++i])
+	{
+		f = NULL;
+		if (is_dir(args[i]))
+		{
+			set_info(flags, &f, args[i]);
+			if (flags & L_LOW)
+			{
+				check > 0 ? ft_putchar('\n') : ft_putstr("");
+				ft_printf("%s:\n", args[i]);
+			}
+			print_ls(flags, f, wid, 1);
+			destroy_file(f);
+		}
+	}
 }
