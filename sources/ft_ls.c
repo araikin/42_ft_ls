@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/22 17:31:43 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/24 12:42:33 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,8 @@ void	handle_dir(uint8_t flags, char **args, t_wid *wid, int check)
 		if (is_dir(args[i]))
 		{
 			set_info(flags, &f, args[i]);
-			if (flags & L_LOW)
-			{
-				check > 0 ? ft_putchar('\n') : ft_putstr("");
-				ft_printf("%s:\n", args[i]);
-			}
+			check > 0 ? ft_putchar('\n') : ft_putstr("");
+			ft_printf("%s:\n", args[i]);
 			print_ls(flags, f, wid, 1);
 			destroy_file(f);
 		}
