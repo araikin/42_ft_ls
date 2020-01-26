@@ -12,6 +12,35 @@
 
 #include "../includes/ft_ls.h"
 
+void	set_lsflags(uint8_t *flags, char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[++i])
+		if (!is_lsflag(flags, s[i]))
+			ft_printf("illegal flag: %c\n", s[i]);
+}
+
+int		is_lsflag(uint8_t *flags, char c)
+{
+	if (c == 'a')
+		*flags = *flags | A_LOW;
+	else if (c == 'A')
+		*flags = *flags | A_UPP;
+	else if (c == 'l')
+		*flags = *flags | L_LOW;
+	else if (c == 't')
+		*flags = *flags | T_LOW;
+	else if (c == 'r')
+		*flags = *flags | R_LOW;
+	else if (c == 'R')
+		*flags = *flags | R_UPP;
+	else
+		return (0);
+	return (1);
+}
+
 void	set_wid(t_file *root, t_wid *wid)
 {
 	if (root != NULL)
@@ -45,4 +74,24 @@ void	iterate_args(uint8_t flags, char **args, t_wid *wid)
 		}
 	}
 	destroy_file(f);
+}
+
+void	handle_dir(uint8_t flags, char **args, t_wid *wid, int check)
+{
+	t_file *f;
+	int		i;
+
+	i = -1;
+	while (args[++i])
+	{
+		f = NULL;
+		if (is_dir(args[i]))
+		{
+			set_info(flags, &f, args[i]);
+			check > 0 ? ft_putchar('\n') : ft_putstr("");
+			ft_printf("%s:\n", args[i]);
+			print_ls(flags, f, wid, 1);
+			destroy_file(f);
+		}
+	}
 }

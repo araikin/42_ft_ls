@@ -36,7 +36,13 @@ int		is_file(char *arg)
 
 int		check_dir(uint8_t flags, t_dirent *dp)
 {
-	if (flags & A_UPP && !(flags & A_LOW))
+	if (flags & R_UPP)
+	{
+		if (dp->d_name[0] == '.')
+			return (0);
+		return (1);
+	}
+	else if (flags & A_UPP && !(flags & A_LOW))
 	{
 		if (!ft_strcmp(dp->d_name, ".") || !ft_strcmp(dp->d_name, ".."))
 			return (0);

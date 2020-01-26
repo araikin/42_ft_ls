@@ -54,13 +54,12 @@ typedef struct			s_wid
 /*******************	ft_ls.c		********************/
 void					ft_ls_one_arg(uint8_t flags, char *arg, t_wid *wid);
 void					ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid);
-void					handle_dir(uint8_t flags, char **args, t_wid *wid, int check);
+void					ft_ls_recur(uint8_t flags, char *arg, t_wid *wid, t_file *d);
 
 /*******************	utils_ls.c		********************/
 void					set_wid(t_file *root, t_wid *wid);
 void					iterate_args(uint8_t flags, char **args, t_wid *wid);
-
-/*******************	flags_ls.c	********************/
+void					handle_dir(uint8_t flags, char **args, t_wid *wid, int check);
 void					set_lsflags(uint8_t *flags, char *s);
 int						is_lsflag(uint8_t *flags, char c);
 
@@ -83,7 +82,7 @@ void					inorder(uint8_t flags, t_file *root, t_wid *wid);
 void					print_l_low(t_file *root, t_wid *wid);
 void					parse_time(time_t mod_time);
 
-/*******************	destroy.c	********************/
+/*******************	output.c	********************/
 void					destroy_file(t_file *file);
 
 #endif

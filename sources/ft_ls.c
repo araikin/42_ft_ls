@@ -38,6 +38,8 @@ void	ft_ls_one_arg(uint8_t flags, char *arg, t_wid *wid)
 	if (flags & L_LOW)
 		set_wid(file, wid);
 	print_ls(flags, file, wid, is_dir(arg) ? 1 : 0);
+	if (flags & R_UPP)
+		ft_ls_recur(flags, arg, wid, file);
 	destroy_file(file);
 }
 
@@ -67,22 +69,31 @@ void	ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid)
 	handle_dir(flags, args, wid, check);
 }
 
-void	handle_dir(uint8_t flags, char **args, t_wid *wid, int check)
+void	recur(uint8_t flags, char *path, t_wid *wid, t_file *f)
 {
-	t_file *f;
-	int		i;
+	char	*tmp;
+	DIR		*d;
 
-	i = -1;
-	while (args[++i])
+	tmp = ft_strcjoin(path, '/', f->name);	
+	if ((d = opendir(tmp)) && f->name[0] != '.')
 	{
-		f = NULL;
-		if (is_dir(args[i]))
-		{
-			set_info(flags, &f, args[i]);
-			check > 0 ? ft_putchar('\n') : ft_putstr("");
-			ft_printf("%s:\n", args[i]);
-			print_ls(flags, f, wid, 1);
-			destroy_file(f);
-		}
+		closedir(d);
+		ft_printf("\n%s:\n", tmp);
+		ft_ls_one_arg(flags, tmp, wid);
+	}
+	else
+	{
+		d != 0 ? closedir(d) : 0;
+		free(tmp);
+	}
+}
+
+void	ft_ls_recur(uint8_t flags, char *path, t_wid *wid, t_file *d)
+{
+	if (d != NULL)
+	{
+		ft_ls_recur(flags, path, wid, d->left);
+		recur(flags, path, wid, d);
+		ft_ls_recur(flags, path, wid, d->right);
 	}
 }

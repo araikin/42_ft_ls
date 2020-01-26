@@ -22,8 +22,7 @@ t_file	*new_node(char *name, char *path, int *total)
 		return (NULL);
 	if (path)
 	{
-		tmp = (path[ft_strlen(path) - 1] == '/') ?
-			ft_strjoin(path, name) : ft_strcjoin(path, '/', name);
+		tmp = ft_strcjoin(path, '/', name);
 		res = lstat(tmp, &new_node->info);
 		free(tmp);
 	}
