@@ -23,7 +23,7 @@ int		main(int ac, char **av)
 	while (av[i] && av[i][0] == '-' && ac--)
 		set_lsflags(&flags, av[i++]);
 	if (ac == 2 || av[i] == NULL)
-		ft_ls_one_arg(flags, av[i] ? av[i] : ".", &wid);
+		ft_ls_one_arg(flags, ft_strdup(av[i] ? av[i] : "."), &wid);
 	else
 		ft_ls_mul_args(flags, &av[i], &wid);
 	return (0);
@@ -39,8 +39,9 @@ void	ft_ls_one_arg(uint8_t flags, char *arg, t_wid *wid)
 		set_wid(file, wid);
 	print_ls(flags, file, wid, is_dir(arg) ? 1 : 0);
 	if (flags & R_UPP)
-		ft_ls_recur(flags, arg, wid, file);
+		recur_start(flags, arg, wid, file);
 	destroy_file(file);
+	free(arg);
 }
 
 void	ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid)
@@ -55,7 +56,7 @@ void	ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid)
 	sort_args(args);
 	while (args[++i])	
 	{
-		if (is_file(args[i]))
+		if (is_file(args[i]) == 1)
 			set_info(flags, &f, args[i]);
 		check++;
 	}
@@ -69,7 +70,7 @@ void	ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid)
 	handle_dir(flags, args, wid, check);
 }
 
-void	recur(uint8_t flags, char *path, t_wid *wid, t_file *f)
+void	recur_process(uint8_t flags, char *path, t_wid *wid, t_file *f)
 {
 	char	*tmp;
 	DIR		*d;
@@ -88,12 +89,12 @@ void	recur(uint8_t flags, char *path, t_wid *wid, t_file *f)
 	}
 }
 
-void	ft_ls_recur(uint8_t flags, char *path, t_wid *wid, t_file *d)
+void	recur_start(uint8_t flags, char *path, t_wid *wid, t_file *d)
 {
 	if (d != NULL)
 	{
-		ft_ls_recur(flags, path, wid, d->left);
-		recur(flags, path, wid, d);
-		ft_ls_recur(flags, path, wid, d->right);
+		recur_start(flags, path, wid, d->left);
+		recur_process(flags, path, wid, d);
+		recur_start(flags, path, wid, d->right);
 	}
 }

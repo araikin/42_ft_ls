@@ -49,11 +49,11 @@ void	set_info(uint8_t flags, t_file **file, char *arg)
 	dir = NULL;
 	dp = NULL;
 	total = 0;
-	if (is_file(arg))
+	if (is_file(arg) == 1)
 		*file = (flags & T_LOW) ?
 			insert_time(*file, new_node(arg, NULL, &total)) :
 			insert_ascii(*file, new_node(arg, NULL, &total));
-	else
+	else if (is_dir(arg) == 1)
 	{
 		dir = opendir(arg);
 		while ((dp = readdir(dir)))
@@ -65,6 +65,8 @@ void	set_info(uint8_t flags, t_file **file, char *arg)
 		}
 		closedir(dir);
 	}
+	else
+		ls_nofile(arg);
 	(*file)->total = total;
 }
 

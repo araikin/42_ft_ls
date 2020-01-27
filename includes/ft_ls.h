@@ -54,7 +54,8 @@ typedef struct			s_wid
 /*******************	ft_ls.c		********************/
 void					ft_ls_one_arg(uint8_t flags, char *arg, t_wid *wid);
 void					ft_ls_mul_args(uint8_t flags, char **args, t_wid *wid);
-void					ft_ls_recur(uint8_t flags, char *arg, t_wid *wid, t_file *d);
+void					recur_process(uint8_t flags, char *path, t_wid *wid, t_file *f);
+void					recur_start(uint8_t flags, char *path, t_wid *wid, t_file *f);
 
 /*******************	utils_ls.c		********************/
 void					set_wid(t_file *root, t_wid *wid);
@@ -84,5 +85,7 @@ void					parse_time(time_t mod_time);
 
 /*******************	output.c	********************/
 void					destroy_file(t_file *file);
+void					ls_usage(void);
+void					ls_nofile(char *arg);
 
 #endif

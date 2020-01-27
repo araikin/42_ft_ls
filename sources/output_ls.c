@@ -23,7 +23,15 @@ void	destroy_file(t_file *file)
 	}
 }
 
-void	ls_error(void)
+void	ls_usage(void)
 {
-	ft_printf("Error\n");
+	ft_printf("usage: ./ft_ls [-ARalrt] [file ...]\n");
+	exit(EXIT_SUCCESS);
+}
+
+void	ls_nofile(char *arg)
+{
+	ft_printf("ft_ls: %s: No such file or directory\n", arg);
+	free(arg);
+	exit(EXIT_SUCCESS);
 }
