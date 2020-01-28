@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/18 16:42:07 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/22 17:08:01 by asultanb         ###   ########.fr       */
+/*   Created: 2020/01/27 15:06:11 by asultanb          #+#    #+#             */
+/*   Updated: 2020/01/27 15:22:18 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,15 @@ int		is_file(char *arg)
 
 int		check_dir(uint8_t flags, t_dirent *dp)
 {
+	/*
 	if (flags & R_UPP)
 	{
 		if (dp->d_name[0] == '.')
 			return (0);
 		return (1);
 	}
-	else if (flags & A_UPP && !(flags & A_LOW))
+	*/
+	if (flags & A_UPP && !(flags & A_LOW))
 	{
 		if (!ft_strcmp(dp->d_name, ".") || !ft_strcmp(dp->d_name, ".."))
 			return (0);

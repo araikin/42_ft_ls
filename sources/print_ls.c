@@ -6,52 +6,59 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 15:40:32 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/24 12:41:28 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/27 14:31:57 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
 
-void	print_ls(uint8_t flags, t_file *file, t_wid *wid, int dir)
+void	print_ls(uint8_t opt, t_file *file, t_wid *wid, int dir)
 {
-	if (flags & L_LOW && dir)
+	if (file && opt & L_LOW && dir)
 		ft_printf("total %d\n", file->total);
-	if (flags & R_LOW)
-		revorder(flags, file, wid);
+	if (opt & R_LOW)
+		revorder(opt, file, wid);
 	else
-		inorder(flags, file, wid);
+		inorder(opt, file, wid);
 }
 
-void	revorder(uint8_t flags, t_file *root, t_wid *wid)
+void	revorder(uint8_t opt, t_file *root, t_wid *wid)
 {
 	if (root != NULL)
 	{
-		revorder(flags, root->right, wid);
-		if (flags & L_LOW)
+		revorder(opt, root->right, wid);
+		if (opt & L_LOW)
 			print_l_low(root, wid);
 		else
 			ft_printf("%s\n", root->name);
-		revorder(flags, root->left, wid);
+		revorder(opt, root->left, wid);
 	}
 }
 
-void	inorder(uint8_t flags, t_file *root, t_wid *wid)
+void	inorder(uint8_t opt, t_file *root, t_wid *wid)
 {
 	if (root != NULL)
 	{
-		inorder(flags, root->left, wid);
-		if (flags & L_LOW)
+		inorder(opt, root->left, wid);
+		if (opt & L_LOW)
 			print_l_low(root, wid);
 		else
 			ft_printf("%s\n", root->name);
-		inorder(flags, root->right, wid);
+		inorder(opt, root->right, wid);
 	}
 }
 
 void	print_l_low(t_file *root, t_wid *wid)
 {
-	ft_printf("%c%c%c%c%c%c%c%c%c%c  ",
-			S_ISDIR(root->info.st_mode) ? 'd' : '-',
+	char	c;
+
+	if (S_ISDIR(root->info.st_mode))
+		c = 'd';
+	else if (S_ISLNK(root->info.st_mode))
+		c = 'l';
+	else
+		c = '-';
+	ft_printf("%c%c%c%c%c%c%c%c%c%c  ", c,
 			root->info.st_mode & S_IRUSR ? 'r' : '-',
 			root->info.st_mode & S_IWUSR ? 'w' : '-',
 			root->info.st_mode & S_IXUSR ? 'x' : '-',

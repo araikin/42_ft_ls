@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/17 11:07:53 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/23 17:49:06 by asultanb         ###   ########.fr       */
+/*   Created: 2020/01/27 15:05:22 by asultanb          #+#    #+#             */
+/*   Updated: 2020/01/27 16:47:54 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,54 +20,29 @@ t_file	*new_node(char *name, char *path, int *total)
 
 	if (!(new_node = (t_file *)malloc(sizeof(t_file))))
 		return (NULL);
-	if (path)
+	if (name)
 	{
 		tmp = ft_strcjoin(path, '/', name);
 		res = lstat(tmp, &new_node->info);
 		free(tmp);
+		if (res == -1)
+		{
+			free(new_node);
+			return (NULL);
+		}
+		new_node->name = ft_strdup(name);
+		new_node->left = NULL;
+		new_node->right = NULL;
+		*total += new_node->info.st_blocks;
 	}
-	else
-		res = lstat(name, &new_node->info);
-	if (res == -1)
-	{
-		free(new_node);
-		return (NULL);
-	}
-	new_node->name = ft_strdup(name);
-	new_node->left = NULL;
-	new_node->right = NULL;
-	*total += new_node->info.st_blocks;
 	return (new_node);
 }
 
-void	set_info(uint8_t flags, t_file **file, char *arg)
+t_file	*insert(uint8_t opt, t_file *file, t_file *new_node)
 {
-	DIR			*dir;
-	t_dirent	*dp;
-	int			total;
-
-	dir = NULL;
-	dp = NULL;
-	total = 0;
-	if (is_file(arg) == 1)
-		*file = (flags & T_LOW) ?
-			insert_time(*file, new_node(arg, NULL, &total)) :
-			insert_ascii(*file, new_node(arg, NULL, &total));
-	else if (is_dir(arg) == 1)
-	{
-		dir = opendir(arg);
-		while ((dp = readdir(dir)))
-		{
-			if (check_dir(flags, dp))
-				*file = (flags & T_LOW) ?
-					insert_time(*file, new_node(dp->d_name, arg, &total)) :
-					insert_ascii(*file, new_node(dp->d_name, arg, &total));
-		}
-		closedir(dir);
-	}
-	else
-		ls_nofile(arg);
-	(*file)->total = total;
+	if (opt & T_LOW)
+		return (insert_time(file, new_node));
+	return (insert_ascii(file, new_node));
 }
 
 t_file	*insert_time(t_file *root, t_file *new_node)
