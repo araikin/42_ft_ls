@@ -30,6 +30,8 @@
 # define T_LOW 8
 # define R_LOW 16
 # define R_UPP 32
+# define S_UPP 64
+# define F_LOW 128
 
 typedef struct dirent	t_dirent;
 typedef struct stat		t_stat;
@@ -63,25 +65,22 @@ void				iterate_args(uint8_t opt, char **args, t_wid *wid);
 void				handle_dir(uint8_t opt, char **args, t_wid *wid, int n);
 
 t_file				*new_node(char *name, char *path, int *total);
-t_file				*insert(uint8_t opt, t_file *file, t_file *new_node);
-t_file				*insert_ascii(t_file *root, t_file *new_node);
-t_file				*insert_time(t_file *root, t_file *new_node);
+t_file				*insert_file(uint8_t opt, t_file *file, t_file *insert);
+t_file				*by_ascii(t_file *root, t_file *insert);
+t_file				*by_time(t_file *root, t_file *insert);
+t_file				*by_size(t_file *root, t_file *insert);
+t_file				*no_sort(t_file *root, t_file *insert);
 
 int					is_dir(char *arg);
 int					is_file(char *arg);
 int					check_dir(uint8_t opt, t_dirent *dp);
-void				sort_args(char **args);
+void				destroy_file(t_file *file);
+void				ls_output(int mode, char *arg);
 
 void				print_ls(uint8_t opt, t_file *file, t_wid *wid, int n);
 void				revorder(uint8_t opt, t_file *root, t_wid *wid);
 void				inorder(uint8_t opt, t_file *root, t_wid *wid);
 void				print_l_low(t_file *root, t_wid *wid);
 void				parse_time(time_t mod_time);
-
-void				destroy_file(t_file *file);
-void				ls_usage(void);
-void				ls_nofile(char *arg);
-void				ls_nooption(char c);
-void				ls_nopermission(t_file *file, char *arg);
 
 #endif

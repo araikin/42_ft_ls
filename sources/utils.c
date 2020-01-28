@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_ls.c                                         :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -34,23 +34,15 @@ int		is_file(char *arg)
 	return (0);
 }
 
-int		check_dir(uint8_t flags, t_dirent *dp)
+int		check_dir(uint8_t opt, t_dirent *dp)
 {
-	/*
-	if (flags & R_UPP)
-	{
-		if (dp->d_name[0] == '.')
-			return (0);
-		return (1);
-	}
-	*/
-	if (flags & A_UPP && !(flags & A_LOW))
+	if (opt & A_UPP && !(opt & A_LOW) && !(opt & F_LOW))
 	{
 		if (!ft_strcmp(dp->d_name, ".") || !ft_strcmp(dp->d_name, ".."))
 			return (0);
 		return (1);
 	}
-	else if (!(flags & A_LOW))
+	else if (!(opt & A_LOW) && !(opt & F_LOW))
 	{
 		if (dp->d_name[0] == '.')
 			return (0);
@@ -59,20 +51,27 @@ int		check_dir(uint8_t flags, t_dirent *dp)
 	return (1);
 }
 
-void	sort_args(char **args)
+void	destroy_file(t_file *file)
 {
-	char	*tmp;
-	int		i;
-
-	i = -1;
-	while (args[++i + 1])
+	if (file != NULL)
 	{
-		if (ft_strcmp(args[i], args[i + 1]) > 0)
-		{
-			tmp = args[i];
-			args[i] = args[i + 1];
-			args[i + 1] = tmp;
-			i = -1;
-		}
+		destroy_file(file->left);
+		destroy_file(file->right);
+		free(file->name);
+		free(file);
 	}
+}
+
+void	ls_output(int mode, char *arg)
+{
+	if (mode == 1)
+	{
+		ft_printf("ft_ls: illegal option -- %c\n", arg[0]);
+		ft_printf("usage: ./ft_ls [-ARalrt] [file ...]\n");
+		exit(EXIT_SUCCESS);
+	}
+	else if (mode == 2)
+		ft_printf("ft_ls: %s: No such file or directory\n", arg);
+	else if (mode == 3)
+		ft_printf("ft_ls: %s: Permission denied\n", arg);
 }

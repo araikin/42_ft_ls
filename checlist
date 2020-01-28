@@ -1,0 +1,28 @@
++	-t in miliseconds/nanoseconds
+-	permission denied doesn't work
+- 	symbolic links
+The file mode printed under the -l option consists of the entry type, owner permis-
+     sions, and group permissions.  The entry type character describes the type of file,
+     as follows:
+
+           b     Block special file.
+           c     Character special file.
+           d     Directory.
+           l     Symbolic link.
+           s     Socket link.
+           p     FIFO.
+           -     Regular file.
+- 	stat/lstat
+- 	-t with multiple args
+-	setuid, setgid, stickybit
+-	-f (no sorting) option
+-	-S (sort by size) option
+-	-u (sort by time of last access) option
+-	-1 option (output in 1 column) The -1, -C, -x, and -l options all override each other;
+-	-F      Display a slash (`/') immediately after each pathname that is a directory, an
+             asterisk (`*') after each that is executable, an at sign (`@') after each
+             symbolic link, an equals sign (`=') after each socket, a percent sign (`%')
+             after each whiteout, and a vertical bar (`|') after each that is a FIFO.
+-	-h      When used with the -l option, use unit suffixes: Byte, Kilobyte, Megabyte,
+             Gigabyte, Terabyte and Petabyte in order to reduce the number of digits to
+             three or less using base 2 for sizes.

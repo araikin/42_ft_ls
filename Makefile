@@ -1,6 +1,6 @@
 NAME	:=	ft_ls
 FLAGS	:=	-Wall -Wextra -Werror
-F_N		:=	ft_ls file_ls print_ls message utils_ls check_ls
+F_N		:=	ft_ls file_ls print_ls utils parse_ls
 SRC		:=	$(addprefix sources/, $(addsuffix .c, $(F_N)))
 OBJ		:=	$(addprefix objects/, $(addsuffix .o, $(F_N)))
 INCL	:=	includes

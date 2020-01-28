@@ -38,31 +38,79 @@ t_file	*new_node(char *name, char *path, int *total)
 	return (new_node);
 }
 
-t_file	*insert(uint8_t opt, t_file *file, t_file *new_node)
+t_file	*insert_file(uint8_t opt, t_file *file, t_file *insert)
 {
-	if (opt & T_LOW)
-		return (insert_time(file, new_node));
-	return (insert_ascii(file, new_node));
+	if (opt & F_LOW)
+		return (no_sort(file, insert));
+	if (opt & S_UPP)
+		return (by_size(file, insert));
+	else if (opt & T_LOW)
+		return (by_time(file, insert));
+	return (by_ascii(file, insert));
 }
 
-t_file	*insert_time(t_file *root, t_file *new_node)
+t_file	*no_sort(t_file *root, t_file *insert)
 {
 	if (root == NULL)
-		return (new_node);
-	if (root->info.st_mtime < new_node->info.st_mtime)
-		root->left = insert_time(root->left, new_node);
-	else
-		root->right = insert_time(root->right, new_node);
+		return (insert);
+	root->right = no_sort(root->right, insert);
 	return (root);
 }
 
-t_file	*insert_ascii(t_file *root, t_file *new_node)
+t_file	*by_time(t_file *root, t_file *insert)
 {
 	if (root == NULL)
-		return (new_node);
-	if (ft_strcmp(root->name, new_node->name) > 0)
-		root->left = insert_ascii(root->left, new_node);
+		return (insert);
+	if (root->info.st_mtimespec.tv_sec <
+			insert->info.st_mtimespec.tv_sec)
+		root->left = by_time(root->left, insert);
+	else if (root->info.st_mtimespec.tv_sec >
+			insert->info.st_mtimespec.tv_sec)
+		root->right = by_time(root->right, insert); 
 	else
-		root->right = insert_ascii(root->right, new_node);
+	{
+		if (root->info.st_mtimespec.tv_nsec <
+				insert->info.st_mtimespec.tv_nsec)
+			root->left = by_time(root->left, insert);
+		else if (root->info.st_mtimespec.tv_nsec >
+				insert->info.st_mtimespec.tv_nsec)
+			root->right = by_time(root->right, insert);
+		else
+		{
+			if (ft_strcmp(root->name, insert->name) > 0)
+				root->left = by_time(root->left, insert);
+			else
+				root->right = by_time(root->right, insert);
+		}
+	}
+	return (root);
+}
+
+t_file	*by_size(t_file *root, t_file *insert)
+{
+	if (root == NULL)		
+		return (insert);
+	if (root->info.st_size < insert->info.st_size)
+		root->left = by_size(root->left, insert);
+	else if (root->info.st_size > insert->info.st_size)
+		root->right = by_size(root->right, insert);
+	else 
+	{
+		if (ft_strcmp(root->name, insert->name) > 0)
+			root->left = by_size(root->left, insert);
+		else
+			root->right = by_size(root->right, insert);
+	}
+	return (root);
+}
+
+t_file	*by_ascii(t_file *root, t_file *insert)
+{
+	if (root == NULL)
+		return (insert);
+	if (ft_strcmp(root->name, insert->name) > 0)
+		root->left = by_ascii(root->left, insert);
+	else
+		root->right = by_ascii(root->right, insert);
 	return (root);
 }

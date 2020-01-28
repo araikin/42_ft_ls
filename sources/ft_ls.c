@@ -12,6 +12,8 @@
 
 #include "../includes/ft_ls.h"
 
+int		g_flag = 1;
+
 int		main(int ac, char **av)
 {
 	int		i;
@@ -52,19 +54,18 @@ void	ft_ls_mul_args(uint8_t opt, char **args, t_wid *wid)
 
 	i = -1;
 	f = NULL;
-	check = 0;
-	sort_args(args);
+	ft_strsort(args);
 	while (args[++i])
-	{
 		if (is_file(args[i]) == 1)
 			set_info(opt, &f, args[i]);
-		check++;
-	}
+	check = f == NULL ? 0 : 1;
 	if (opt & L_LOW)
 	{
+		g_flag = 0;
 		set_wid(f, wid);
 		iterate_args(opt, args, wid);
 	}
+	g_flag = 1;
 	print_ls(opt, f, wid, 0);
 	destroy_file(f);
 	handle_dir(opt, args, wid, check);
