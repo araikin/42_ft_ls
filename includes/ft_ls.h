@@ -33,6 +33,7 @@
 # define S_UPP 64
 # define F_LOW 128
 # define G_UPP 256
+# define F_UPP 512
 
 typedef struct dirent	t_dirent;
 typedef struct stat		t_stat;
@@ -79,14 +80,15 @@ int					check_dir(uint16_t opt, t_dirent *dp);
 void				destroy_file(t_file *file);
 
 void				print_ls(uint16_t opt, t_file *file, t_wid *wid, int n);
-void				revorder(uint16_t opt, t_file *root, t_wid *wid);
-void				inorder(uint16_t opt, t_file *root, t_wid *wid);
+void				revorder(uint16_t opt, t_file *file, t_wid *wid);
+void				inorder(uint16_t opt, t_file *file, t_wid *wid);
+void				print_name(uint16_t opt, t_file *file);
 void				ls_output(int mode, char *arg);
 
-void				long_format(uint16_t opt, t_file *root, t_wid *wid);
-void				print_st_mode(t_file *root);
+void				long_format(uint16_t opt, t_file *file, t_wid *wid);
+void				print_st_mode(t_file *file);
 void				print_time(time_t mod_time);
-void				print_name(uint16_t opt, t_file *root);
-void				print_link(uint16_t opt, t_file *root);
+void				print_link(uint16_t opt, t_file *file);
+void				print_type(t_file *file);
 
 #endif

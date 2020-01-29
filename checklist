@@ -14,16 +14,28 @@
            -     Regular file.
 
 + 	symbolic links
-- 	stat/lstat
-- 	-t with multiple args
--	setuid, setgid, stickybit
-
--	-u (sort by time of last access) option
--	-1 option (output in 1 column) The -1, -C, -x, and -l options all override each other;
--	-F      Display a slash (`/') immediately after each pathname that is a directory, an
++	for multiple arguments prints no file for reg_files for all options
++	-F      Display a slash (`/') immediately after each pathname that is a directory, an
              asterisk (`*') after each that is executable, an at sign (`@') after each
              symbolic link, an equals sign (`=') after each socket, a percent sign (`%')
              after each whiteout, and a vertical bar (`|') after each that is a FIFO.
+
+- 	stat/lstat
+- 	-t with multiple args
+-	no need for set_wid for multiple args and recursion
+
+
+
+-	-u (sort by time of last access) option
+-	-1 option (output in 1 column) The -1, -C, -x, and -l options all override each other;
 -	-h      When used with the -l option, use unit suffixes: Byte, Kilobyte, Megabyte,
              Gigabyte, Terabyte and Petabyte in order to reduce the number of digits to
              three or less using base 2 for sizes.
+-	-m      Stream output format; list files across the page, separated by commas.
+-	-p      Write a slash (`/') after each filename if that file is a directory.
+-	-s      Display the number of file system blocks actually used by each file, in units of 512
+             bytes, where partial units are rounded up to the next integer value.  If the output
+             is to a terminal, a total sum for all the file sizes is output on a line before the
+             listing.  The environment variable BLOCKSIZE overrides the unit size of 512 bytes.`
+-	-T      When used with the -l (lowercase letter ``ell'') option, display complete time
+             information for the file, including month, day, hour, minute, second, and year.

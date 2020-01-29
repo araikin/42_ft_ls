@@ -36,6 +36,8 @@ void	set_options(uint16_t *opt, char *s, int i)
 			*opt = *opt | S_UPP;
 		else if (s[i] == 'G')
 			*opt = *opt | G_UPP;
+		else if (s[i] == 'F')
+			*opt = *opt | F_UPP;
 		else
 			ls_output(1, &s[i]);
 	}
@@ -131,7 +133,7 @@ void	handle_dir(uint16_t opt, char **args, t_wid *wid, int check)
 			free(tmp);
 			check++;
 		}
-		else
+		else if (!is_file(args[i]))
 			ls_output(2, args[i]);
 	}
 }

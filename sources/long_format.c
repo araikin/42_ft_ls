@@ -24,30 +24,21 @@ void	long_format(uint16_t opt, t_file *file, t_wid *wid)
 	print_name(opt, file);
 }
 
-void	print_name(uint16_t opt, t_file *file)
+void	print_type(t_file *file)
 {
-	if (S_ISLNK(file->info.st_mode))
-		return (print_link(opt, file));
-	if (!(opt & G_UPP))
-		ft_printf("%s\n", file->name);
-	else
-	{
-		if (S_ISDIR(file->info.st_mode))
-			write(1, "\x1b[34m", 5);
-		else if (S_ISSOCK(file->info.st_mode))
-			write(1, "\x1b[32m", 5);
-		else if (S_ISBLK(file->info.st_mode))
-			write(1, "\x1b[36m", 5);
-		else if (S_ISCHR(file->info.st_mode) || S_ISFIFO(file->info.st_mode))
-			write(1, "\x1b[30m", 5);
-		else if (S_ISREG(file->info.st_mode) &&
-				(file->info.st_mode & S_IXUSR ||
-				file->info.st_mode & S_IXGRP ||
-				file->info.st_mode & S_IXOTH))
-			write(1, "\x1b[31m", 5);
-		ft_printf("%s\n", file->name);
-		write(1, "\x1b[0m", 5);
-	}
+	if (S_ISDIR(file->info.st_mode))
+		ft_putchar('/');
+	else if (S_ISLNK(file->info.st_mode))
+		ft_putchar('@');
+	else if (S_ISREG(file->info.st_mode) && (file->info.st_mode & S_IXUSR ||
+			file->info.st_mode & S_IXGRP || file->info.st_mode & S_IXOTH))
+		ft_putchar('*');
+	else if (S_ISSOCK(file->info.st_mode))
+		ft_putchar('=');
+	else if (S_ISFIFO(file->info.st_mode))
+		ft_putchar('|');
+	else if (S_ISWHT(file->info.st_mode))
+		ft_putchar('%');
 }
 
 void	print_link(uint16_t opt, t_file *file)
@@ -63,6 +54,8 @@ void	print_link(uint16_t opt, t_file *file)
 		write(1, "\x1b[35m", 5);
 	ft_printf("%s", file->name);
 	write(1, "\x1b[0m", 5);
+	if ((opt & F_UPP) && (opt & L_LOW))
+		print_type(file);
 	ft_printf(" -> %s\n", link);
 	free(link);
 }
@@ -70,7 +63,13 @@ void	print_link(uint16_t opt, t_file *file)
 void	print_st_mode(t_file *file)
 {
 	char	c;
+	char	s_uid;
+	char	s_gid;
+	char	st_bit;
 
+	st_bit = file->info.st_mode & S_ISVTX ? 't' : 'x';
+	s_uid = file->info.st_mode & S_ISUID ? 's' : 'x';
+	s_gid = file->info.st_mode & S_ISGID ? 's' : 'x';
 	c = S_ISDIR(file->info.st_mode) ? 'd' : '-';
 	c = S_ISLNK(file->info.st_mode) ? 'l' : c;
 	c = S_ISBLK(file->info.st_mode) ? 'b' : c;
@@ -80,13 +79,13 @@ void	print_st_mode(t_file *file)
 	ft_printf("%c%c%c%c%c%c%c%c%c%c%c ", c,
 		file->info.st_mode & S_IRUSR ? 'r' : '-',
 		file->info.st_mode & S_IWUSR ? 'w' : '-',
-		file->info.st_mode & S_IXUSR ? 'x' : '-',
+		file->info.st_mode & S_IXUSR ? s_uid : '-',
 		file->info.st_mode & S_IRGRP ? 'r' : '-',
 		file->info.st_mode & S_IWGRP ? 'w' : '-',
-		file->info.st_mode & S_IXGRP ? 'x' : '-',
+		file->info.st_mode & S_IXGRP ? s_gid : '-',
 		file->info.st_mode & S_IROTH ? 'r' : '-',
 		file->info.st_mode & S_IWOTH ? 'w' : '-',
-		file->info.st_mode & S_IXOTH ? 'x' : '-',
+		file->info.st_mode & S_IXOTH ? st_bit : '-',
 		listxattr(file->path, NULL, 0, XATTR_NOFOLLOW) > 0 ? '@' : ' ');
 }
 
