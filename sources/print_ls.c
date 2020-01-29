@@ -6,13 +6,13 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 15:40:32 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/27 14:31:57 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/28 17:15:25 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
 
-void	print_ls(uint8_t opt, t_file *file, t_wid *wid, int dir)
+void	print_ls(uint16_t opt, t_file *file, t_wid *wid, int dir)
 {
 	if (file && opt & L_LOW && dir)
 		ft_printf("total %d\n", file->total);
@@ -22,80 +22,56 @@ void	print_ls(uint8_t opt, t_file *file, t_wid *wid, int dir)
 		inorder(opt, file, wid);
 }
 
-void	revorder(uint8_t opt, t_file *root, t_wid *wid)
+void	revorder(uint16_t opt, t_file *file, t_wid *wid)
 {
-	if (root != NULL)
+	if (file != NULL)
 	{
-		revorder(opt, root->right, wid);
+		revorder(opt, file->right, wid);
 		if (opt & L_LOW)
-			print_l_low(root, wid);
+			long_format(opt, file, wid);
 		else
-			ft_printf("%s\n", root->name);
-		revorder(opt, root->left, wid);
+			ft_printf("%s\n", file->name);
+		revorder(opt, file->left, wid);
 	}
 }
 
-void	inorder(uint8_t opt, t_file *root, t_wid *wid)
+void	inorder(uint16_t opt, t_file *file, t_wid *wid)
 {
-	if (root != NULL)
+	if (file != NULL)
 	{
-		inorder(opt, root->left, wid);
+		inorder(opt, file->left, wid);
 		if (opt & L_LOW)
-			print_l_low(root, wid);
+			long_format(opt, file, wid);
 		else
-			ft_printf("%s\n", root->name);
-		inorder(opt, root->right, wid);
+			ft_printf("%s\n", file->name);
+		inorder(opt, file->right, wid);
 	}
 }
 
-void	print_l_low(t_file *root, t_wid *wid)
+void	ls_output(int mode, char *arg)
 {
-	char	c;
-
-	if (S_ISDIR(root->info.st_mode))
-		c = 'd';
-	else if (S_ISLNK(root->info.st_mode))
-		c = 'l';
-	else
-		c = '-';
-	ft_printf("%c%c%c%c%c%c%c%c%c%c  ", c,
-			root->info.st_mode & S_IRUSR ? 'r' : '-',
-			root->info.st_mode & S_IWUSR ? 'w' : '-',
-			root->info.st_mode & S_IXUSR ? 'x' : '-',
-			root->info.st_mode & S_IRGRP ? 'r' : '-',
-			root->info.st_mode & S_IWGRP ? 'w' : '-',
-			root->info.st_mode & S_IXGRP ? 'x' : '-',
-			root->info.st_mode & S_IROTH ? 'r' : '-',
-			root->info.st_mode & S_IWOTH ? 'w' : '-',
-			root->info.st_mode & S_IXOTH ? 'x' : '-');
-	ft_printf("%*d %-*s  %-*s  %*d ",
-			wid->links, root->info.st_nlink,
-			wid->uid, (getpwuid(root->info.st_uid))->pw_name,
-			wid->gid, (getgrgid(root->info.st_gid))->gr_name,
-			wid->size, root->info.st_size);
-	parse_time(root->info.st_mtime);
-	ft_printf(" %s\n", root->name);
-}
-
-void	parse_time(time_t mod_time)
-{
-	int		flag;
+	char	*tmp;
 	int		i;
-	char	*mtime;
+	int		k;
 
-	flag = (time(NULL) - mod_time > 15552000) ? 1 : 0;
-	mtime = ctime(&mod_time);
-	i = 3;
-	while (++i < 11)
-		write(1, &mtime[i], 1);
-	if (flag)
+	tmp = NULL;
+	k = 0;
+	if (mode == 1)
 	{
-		i += 8;
-		write(1, " ", 1);
-		while (++i < 24)
-			write(1, &mtime[i], 1);
+		ft_printf("ft_ls: illegal option -- %c\n", arg[0]);
+		ft_printf("usage: ./ft_ls [-ARalrt] [file ...]\n");
+		exit(EXIT_SUCCESS);
 	}
-	else
-		while (i < 16)
-			write(1, &mtime[i++], 1);
+	else if (mode == 2)
+		ft_printf("ft_ls: %s: No such file or directory\n", arg);
+	else if (mode == 3)
+	{
+		i = -1;
+		while (arg[++i])
+			if (arg[i] == '/')
+				k = i + 1;
+		tmp = k > 0 ? ft_strdup(&arg[k]) : ft_strdup(arg);
+		ft_printf("ft_ls: %s: Permission denied\n", tmp);
+		free(tmp);
+	}
 }

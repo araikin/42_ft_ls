@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:05:12 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/27 16:52:16 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/28 17:42:56 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@ int		g_flag = 1;
 
 int		main(int ac, char **av)
 {
-	int		i;
-	uint8_t	opt;
-	t_wid	wid;
+	int			i;
+	uint16_t	opt;
+	t_wid		wid;
 
 	i = 1;
 	ft_bzero(&wid, sizeof(t_wid));
 	while (av[i] && av[i][0] == '-' && ac--)
-		set_options(&opt, av[i++]);
+		set_options(&opt, av[i++], 0);
 	if (ac == 2 || av[i] == NULL)
 		ft_ls_one_arg(opt, ft_strdup(av[i] ? av[i] : "."), &wid);
 	else
@@ -31,7 +31,7 @@ int		main(int ac, char **av)
 	return (0);
 }
 
-void	ft_ls_one_arg(uint8_t opt, char *arg, t_wid *wid)
+void	ft_ls_one_arg(uint16_t opt, char *arg, t_wid *wid)
 {
 	t_file	*file;
 
@@ -46,7 +46,7 @@ void	ft_ls_one_arg(uint8_t opt, char *arg, t_wid *wid)
 	free(arg);
 }
 
-void	ft_ls_mul_args(uint8_t opt, char **args, t_wid *wid)
+void	ft_ls_mul_args(uint16_t opt, char **args, t_wid *wid)
 {
 	t_file	*f;
 	int		i;
@@ -71,17 +71,23 @@ void	ft_ls_mul_args(uint8_t opt, char **args, t_wid *wid)
 	handle_dir(opt, args, wid, check);
 }
 
-void	r_upp(uint8_t opt, char *path, t_wid *wid, t_file *f)
+void	r_upp(uint16_t opt, char *path, t_wid *wid, t_file *f)
 {
 	char	*tmp;
 	DIR		*d;
 
 	tmp = ft_strcjoin(path, '/', f->name);
-	if ((d = opendir(tmp)) && ft_strcmp(f->name, ".") && ft_strcmp(f->name, ".."))
+	if ((d = opendir(tmp)) &&
+			ft_strcmp(f->name, ".") && ft_strcmp(f->name, ".."))
 	{
 		closedir(d);
 		ft_printf("\n%s:\n", tmp);
 		ft_ls_one_arg(opt, tmp, wid);
+	}
+	else if (is_dir(tmp) == 1 && !(d = opendir(tmp)) && g_flag)
+	{
+		ft_printf("\n%s:\n", tmp);
+		ls_output(3, tmp);
 	}
 	else
 	{
@@ -90,7 +96,7 @@ void	r_upp(uint8_t opt, char *path, t_wid *wid, t_file *f)
 	}
 }
 
-void	iter_r(uint8_t opt, char *path, t_wid *wid, t_file *d)
+void	iter_r(uint16_t opt, char *path, t_wid *wid, t_file *d)
 {
 	if (d != NULL)
 	{

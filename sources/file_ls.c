@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:05:22 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/27 16:47:54 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/28 15:47:11 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,14 @@
 t_file	*new_node(char *name, char *path, int *total)
 {
 	t_file	*new_node;
-	char	*tmp;
 	int		res;
 
 	if (!(new_node = (t_file *)malloc(sizeof(t_file))))
 		return (NULL);
 	if (name)
 	{
-		tmp = ft_strcjoin(path, '/', name);
-		res = lstat(tmp, &new_node->info);
-		free(tmp);
+		new_node->path = ft_strcjoin(path, '/', name);
+		res = lstat(new_node->path, &new_node->info);
 		if (res == -1)
 		{
 			free(new_node);
@@ -38,79 +36,74 @@ t_file	*new_node(char *name, char *path, int *total)
 	return (new_node);
 }
 
-t_file	*insert_file(uint8_t opt, t_file *file, t_file *insert)
+t_file	*insert_file(uint16_t opt, t_file *f, t_file *new)
 {
 	if (opt & F_LOW)
-		return (no_sort(file, insert));
+	{
+		if (f == NULL)
+			return (new);
+		if (!ft_strcmp(new->name, ".") || !ft_strcmp(new->name, ".."))
+			return (by_ascii(f, new));
+		f->right = insert_file(opt, f->right, new);
+		return (f);
+	}
 	if (opt & S_UPP)
-		return (by_size(file, insert));
+		return (by_size(f, new));
 	else if (opt & T_LOW)
-		return (by_time(file, insert));
-	return (by_ascii(file, insert));
+		return (by_time(f, new));
+	return (by_ascii(f, new));
 }
 
-t_file	*no_sort(t_file *root, t_file *insert)
+t_file	*by_time(t_file *f, t_file *new)
 {
-	if (root == NULL)
-		return (insert);
-	root->right = no_sort(root->right, insert);
-	return (root);
-}
-
-t_file	*by_time(t_file *root, t_file *insert)
-{
-	if (root == NULL)
-		return (insert);
-	if (root->info.st_mtimespec.tv_sec <
-			insert->info.st_mtimespec.tv_sec)
-		root->left = by_time(root->left, insert);
-	else if (root->info.st_mtimespec.tv_sec >
-			insert->info.st_mtimespec.tv_sec)
-		root->right = by_time(root->right, insert); 
+	if (f == NULL)
+		return (new);
+	if (f->info.st_mtimespec.tv_sec < new->info.st_mtimespec.tv_sec)
+		f->left = by_time(f->left, new);
+	else if (f->info.st_mtimespec.tv_sec > new->info.st_mtimespec.tv_sec)
+		f->right = by_time(f->right, new);
 	else
 	{
-		if (root->info.st_mtimespec.tv_nsec <
-				insert->info.st_mtimespec.tv_nsec)
-			root->left = by_time(root->left, insert);
-		else if (root->info.st_mtimespec.tv_nsec >
-				insert->info.st_mtimespec.tv_nsec)
-			root->right = by_time(root->right, insert);
+		if (f->info.st_mtimespec.tv_nsec < new->info.st_mtimespec.tv_nsec)
+			f->left = by_time(f->left, new);
+		else if (f->info.st_mtimespec.tv_nsec > new->info.st_mtimespec.tv_nsec)
+			f->right = by_time(f->right, new);
 		else
 		{
-			if (ft_strcmp(root->name, insert->name) > 0)
-				root->left = by_time(root->left, insert);
+			if (ft_strcmp(f->name, new->name) > 0)
+				f->left = by_time(f->left, new);
 			else
-				root->right = by_time(root->right, insert);
+				f->right = by_time(f->right, new);
 		}
 	}
-	return (root);
+	return (f);
 }
 
-t_file	*by_size(t_file *root, t_file *insert)
+t_file	*by_size(t_file *f, t_file *new)
 {
-	if (root == NULL)		
-		return (insert);
-	if (root->info.st_size < insert->info.st_size)
-		root->left = by_size(root->left, insert);
-	else if (root->info.st_size > insert->info.st_size)
-		root->right = by_size(root->right, insert);
-	else 
-	{
-		if (ft_strcmp(root->name, insert->name) > 0)
-			root->left = by_size(root->left, insert);
-		else
-			root->right = by_size(root->right, insert);
-	}
-	return (root);
-}
-
-t_file	*by_ascii(t_file *root, t_file *insert)
-{
-	if (root == NULL)
-		return (insert);
-	if (ft_strcmp(root->name, insert->name) > 0)
-		root->left = by_ascii(root->left, insert);
+	if (f == NULL)
+		return (new);
+	if (f->info.st_size < new->info.st_size)
+		f->left = by_size(f->left, new);
+	else if (f->info.st_size > new->info.st_size)
+		f->right = by_size(f->right, new);
 	else
-		root->right = by_ascii(root->right, insert);
-	return (root);
+	{
+		if (ft_strcmp(f->name, new->name) > 0)
+			f->left = by_size(f->left, new);
+		else
+			f->right = by_size(f->right, new);
+	}
+	return (f);
+}
+
+t_file	*by_ascii(t_file *f, t_file *new)
+{
+	if (f == NULL)
+		return (new);
+	if (ft_strcmp(f->name, new->name) > 0)
+		f->left = by_ascii(f->left, new);
+	else
+		f->right = by_ascii(f->right, new);
+	return (f);
 }

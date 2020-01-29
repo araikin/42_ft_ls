@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 12:48:03 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/27 16:17:09 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/28 17:42:54 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # define R_UPP 32
 # define S_UPP 64
 # define F_LOW 128
+# define G_UPP 256
 
 typedef struct dirent	t_dirent;
 typedef struct stat		t_stat;
@@ -39,6 +40,7 @@ typedef struct stat		t_stat;
 typedef struct		s_file
 {
 	char			*name;
+	char			*path;
 	int				total;
 	t_stat			info;
 	struct s_file	*left;
@@ -51,36 +53,40 @@ typedef struct		s_wid
 	int				uid;
 	int				gid;
 	int				size;
+	char			mode;
 }					t_wid;
 
-void				ft_ls_one_arg(uint8_t opt, char *arg, t_wid *wid);
-void				ft_ls_mul_args(uint8_t opt, char **args, t_wid *wid);
-void				r_upp(uint8_t opt, char *path, t_wid *wid, t_file *f);
-void				iter_r(uint8_t opt, char *path, t_wid *wid, t_file *f);
+void				ft_ls_one_arg(uint16_t opt, char *arg, t_wid *wid);
+void				ft_ls_mul_args(uint16_t opt, char **args, t_wid *wid);
+void				r_upp(uint16_t opt, char *path, t_wid *wid, t_file *f);
+void				iter_r(uint16_t opt, char *path, t_wid *wid, t_file *f);
 
-void				set_options(uint8_t *opt, char *s);
-void				set_info(uint8_t opt, t_file **file, char *arg);
+void				set_options(uint16_t *opt, char *s, int i);
+void				set_info(uint16_t opt, t_file **file, char *arg);
 void				set_wid(t_file *root, t_wid *wid);
-void				iterate_args(uint8_t opt, char **args, t_wid *wid);
-void				handle_dir(uint8_t opt, char **args, t_wid *wid, int n);
+void				iterate_args(uint16_t opt, char **args, t_wid *wid);
+void				handle_dir(uint16_t opt, char **args, t_wid *wid, int n);
 
 t_file				*new_node(char *name, char *path, int *total);
-t_file				*insert_file(uint8_t opt, t_file *file, t_file *insert);
-t_file				*by_ascii(t_file *root, t_file *insert);
-t_file				*by_time(t_file *root, t_file *insert);
-t_file				*by_size(t_file *root, t_file *insert);
-t_file				*no_sort(t_file *root, t_file *insert);
+t_file				*insert_file(uint16_t opt, t_file *f, t_file *new);
+t_file				*by_ascii(t_file *f, t_file *new);
+t_file				*by_time(t_file *f, t_file *new);
+t_file				*by_size(t_file *f, t_file *new);
 
 int					is_dir(char *arg);
 int					is_file(char *arg);
-int					check_dir(uint8_t opt, t_dirent *dp);
+int					check_dir(uint16_t opt, t_dirent *dp);
 void				destroy_file(t_file *file);
+
+void				print_ls(uint16_t opt, t_file *file, t_wid *wid, int n);
+void				revorder(uint16_t opt, t_file *root, t_wid *wid);
+void				inorder(uint16_t opt, t_file *root, t_wid *wid);
 void				ls_output(int mode, char *arg);
 
-void				print_ls(uint8_t opt, t_file *file, t_wid *wid, int n);
-void				revorder(uint8_t opt, t_file *root, t_wid *wid);
-void				inorder(uint8_t opt, t_file *root, t_wid *wid);
-void				print_l_low(t_file *root, t_wid *wid);
-void				parse_time(time_t mod_time);
+void				long_format(uint16_t opt, t_file *root, t_wid *wid);
+void				print_st_mode(t_file *root, t_wid *wid);
+void				print_time(time_t mod_time);
+void				print_name(uint16_t opt, t_file *root, t_wid *wid);
+void				print_link(uint16_t opt, t_file *root);
 
 #endif
