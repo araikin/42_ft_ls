@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 15:45:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 17:37:55 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/28 18:01:02 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,36 @@
 
 void	long_format(uint16_t opt, t_file *file, t_wid *wid)
 {
-	print_st_mode(file, wid);
+	print_st_mode(file);
 	ft_printf("%*d %-*s  %-*s  %*d ",
 		wid->links, file->info.st_nlink,
 		wid->uid, (getpwuid(file->info.st_uid))->pw_name,
 		wid->gid, (getgrgid(file->info.st_gid))->gr_name,
 		wid->size, file->info.st_size);
 	print_time(file->info.st_mtime);
-	print_name(opt, file, wid);
+	print_name(opt, file);
 }
 
-void	print_name(uint16_t opt, t_file *file, t_wid *wid)
+void	print_name(uint16_t opt, t_file *file)
 {
-	if (wid->mode == 'l')
+	if (S_ISLNK(file->info.st_mode))
 		return (print_link(opt, file));
 	if (!(opt & G_UPP))
 		ft_printf("%s\n", file->name);
 	else
 	{
-		if (wid->mode == 'd')
+		if (S_ISDIR(file->info.st_mode))
 			write(1, "\x1b[34m", 5);
-		else if (wid->mode == 's')
+		else if (S_ISSOCK(file->info.st_mode))
 			write(1, "\x1b[32m", 5);
-		else if (wid->mode == 'b')
+		else if (S_ISBLK(file->info.st_mode))
 			write(1, "\x1b[36m", 5);
-		else if (wid->mode == 'c' || wid->mode == 'p')
+		else if (S_ISCHR(file->info.st_mode) || S_ISFIFO(file->info.st_mode))
 			write(1, "\x1b[30m", 5);
-		else if (wid->mode == '-' && (file->info.st_mode & S_IXUSR ||
-			file->info.st_mode & S_IXGRP || file->info.st_mode & S_IXOTH))
+		else if (S_ISREG(file->info.st_mode) &&
+				(file->info.st_mode & S_IXUSR ||
+				file->info.st_mode & S_IXGRP ||
+				file->info.st_mode & S_IXOTH))
 			write(1, "\x1b[31m", 5);
 		ft_printf("%s\n", file->name);
 		write(1, "\x1b[0m", 5);
@@ -65,15 +67,17 @@ void	print_link(uint16_t opt, t_file *file)
 	free(link);
 }
 
-void	print_st_mode(t_file *file, t_wid *wid)
+void	print_st_mode(t_file *file)
 {
-	wid->mode = S_ISDIR(file->info.st_mode) ? 'd' : '-';
-	wid->mode = S_ISLNK(file->info.st_mode) ? 'l' : wid->mode;
-	wid->mode = S_ISBLK(file->info.st_mode) ? 'b' : wid->mode;
-	wid->mode = S_ISCHR(file->info.st_mode) ? 'c' : wid->mode;
-	wid->mode = S_ISSOCK(file->info.st_mode) ? 's' : wid->mode;
-	wid->mode = S_ISFIFO(file->info.st_mode) ? 'p' : wid->mode;
-	ft_printf("%c%c%c%c%c%c%c%c%c%c%c ", wid->mode,
+	char	c;
+
+	c = S_ISDIR(file->info.st_mode) ? 'd' : '-';
+	c = S_ISLNK(file->info.st_mode) ? 'l' : c;
+	c = S_ISBLK(file->info.st_mode) ? 'b' : c;
+	c = S_ISCHR(file->info.st_mode) ? 'c' : c;
+	c = S_ISSOCK(file->info.st_mode) ? 's' : c;
+	c = S_ISFIFO(file->info.st_mode) ? 'p' : c;
+	ft_printf("%c%c%c%c%c%c%c%c%c%c%c ", c,
 		file->info.st_mode & S_IRUSR ? 'r' : '-',
 		file->info.st_mode & S_IWUSR ? 'w' : '-',
 		file->info.st_mode & S_IXUSR ? 'x' : '-',

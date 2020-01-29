@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 12:48:03 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 17:42:54 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/28 18:02:02 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,9 @@ void				inorder(uint16_t opt, t_file *root, t_wid *wid);
 void				ls_output(int mode, char *arg);
 
 void				long_format(uint16_t opt, t_file *root, t_wid *wid);
-void				print_st_mode(t_file *root, t_wid *wid);
+void				print_st_mode(t_file *root);
 void				print_time(time_t mod_time);
-void				print_name(uint16_t opt, t_file *root, t_wid *wid);
+void				print_name(uint16_t opt, t_file *root);
 void				print_link(uint16_t opt, t_file *root);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 15:40:32 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 17:15:25 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/28 18:02:24 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	revorder(uint16_t opt, t_file *file, t_wid *wid)
 		if (opt & L_LOW)
 			long_format(opt, file, wid);
 		else
-			ft_printf("%s\n", file->name);
+			print_name(opt, file);
 		revorder(opt, file->left, wid);
 	}
 }
@@ -43,7 +43,7 @@ void	inorder(uint16_t opt, t_file *file, t_wid *wid)
 		if (opt & L_LOW)
 			long_format(opt, file, wid);
 		else
-			ft_printf("%s\n", file->name);
+			print_name(opt, file);
 		inorder(opt, file->right, wid);
 	}
 }
