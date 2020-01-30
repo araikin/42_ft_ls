@@ -6,13 +6,11 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:05:12 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 18:01:48 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/29 17:26:37 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
-
-int		g_flag = 1;
 
 int		main(int ac, char **av)
 {
@@ -55,17 +53,14 @@ void	ft_ls_mul_args(uint16_t opt, char **args, t_wid *wid)
 	i = -1;
 	f = NULL;
 	ft_strsort(args);
+	if (opt & T_LOW)
+		sort_time_args(args);
 	while (args[++i])
-		if (is_file(args[i]) == 1)
+		if (is_file(args[i]))
 			set_info(opt, &f, args[i]);
 	check = f == NULL ? 0 : 1;
 	if (opt & L_LOW)
-	{
-		g_flag = 0;
 		set_wid(f, wid);
-		iterate_args(opt, args, wid);
-	}
-	g_flag = 1;
 	print_ls(opt, f, wid, 0);
 	destroy_file(f);
 	handle_dir(opt, args, wid, check);
@@ -84,7 +79,7 @@ void	r_upp(uint16_t opt, char *path, t_wid *wid, t_file *f)
 		ft_printf("\n%s:\n", tmp);
 		ft_ls_one_arg(opt, tmp, wid);
 	}
-	else if (is_dir(tmp) == 1 && !(d = opendir(tmp)) && g_flag)
+	else if (is_dir(tmp) == 1 && !(d = opendir(tmp)))
 	{
 		ft_printf("\n%s:\n", tmp);
 		ls_output(3, tmp);

@@ -6,13 +6,11 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 17:53:02 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/29 17:37:18 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
-
-extern int g_flag;
 
 void	set_options(uint16_t *opt, char *s, int i)
 {
@@ -56,7 +54,7 @@ void	set_info(uint16_t opt, t_file **f, char *arg)
 		*f = insert_file(opt, *f, new_node(arg, NULL, &t));
 	else if (is_dir(arg) == 1)
 	{
-		if (!(dir = opendir(arg)) && g_flag)
+		if (!(dir = opendir(arg)))
 			ls_output(3, arg);
 		else
 		{
@@ -68,8 +66,7 @@ void	set_info(uint16_t opt, t_file **f, char *arg)
 	}
 	else
 		ls_output(2, arg);
-	if (*f)
-		(*f)->total = t;
+	*f == NULL ? ft_putstr("") : ((*f)->total = t);
 }
 
 void	set_wid(t_file *root, t_wid *wid)
@@ -89,25 +86,28 @@ void	set_wid(t_file *root, t_wid *wid)
 	}
 }
 
-void	iterate_args(uint16_t opt, char **args, t_wid *wid)
+void	sort_time_args(char **args)
 {
-	t_file	*f;
-	int		i;
+	t_stat	st1;
+	t_stat	st2;
 	char	*tmp;
+	int		i;
 
-	f = NULL;
 	i = -1;
-	while (args[++i])
+	while (args[++i + 1])
 	{
-		if (is_dir(args[i]) == 1)
+		ft_bzero(&st1, sizeof(t_stat));
+		ft_bzero(&st2, sizeof(t_stat));
+		lstat(args[i], &st1);
+		lstat(args[i + 1], &st2);
+		if (st1.st_mtime < st2.st_mtime)
 		{
-			tmp = ft_strdup(args[i]);
-			set_info(opt, &f, tmp);
-			set_wid(f, wid);
-			free(tmp);
+			tmp = args[i];
+			args[i] = args[i + 1];
+			args[i + 1] = tmp;
+			i = -1;
 		}
 	}
-	destroy_file(f);
 }
 
 void	handle_dir(uint16_t opt, char **args, t_wid *wid, int check)
@@ -126,6 +126,7 @@ void	handle_dir(uint16_t opt, char **args, t_wid *wid, int check)
 			check > 0 ? ft_putchar('\n') : ft_putstr("");
 			ft_printf("%s:\n", tmp);
 			set_info(opt, &f, tmp);
+			set_wid(f, wid);
 			print_ls(opt, f, wid, 1);
 			if (opt & R_UPP)
 				iter_r(opt, tmp, wid, f);
@@ -133,7 +134,5 @@ void	handle_dir(uint16_t opt, char **args, t_wid *wid, int check)
 			free(tmp);
 			check++;
 		}
-		else if (!is_file(args[i]))
-			ls_output(2, args[i]);
 	}
 }

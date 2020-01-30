@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 12:48:03 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 18:02:02 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/29 17:52:59 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ void				iter_r(uint16_t opt, char *path, t_wid *wid, t_file *f);
 void				set_options(uint16_t *opt, char *s, int i);
 void				set_info(uint16_t opt, t_file **file, char *arg);
 void				set_wid(t_file *root, t_wid *wid);
-void				iterate_args(uint16_t opt, char **args, t_wid *wid);
 void				handle_dir(uint16_t opt, char **args, t_wid *wid, int n);
+void				sort_time_args(char **args);
 
 t_file				*new_node(char *name, char *path, int *total);
 t_file				*insert_file(uint16_t opt, t_file *f, t_file *new);
@@ -78,12 +78,13 @@ int					is_dir(char *arg);
 int					is_file(char *arg);
 int					check_dir(uint16_t opt, t_dirent *dp);
 void				destroy_file(t_file *file);
+void				ls_output(int mode, char *arg);
 
 void				print_ls(uint16_t opt, t_file *file, t_wid *wid, int n);
 void				revorder(uint16_t opt, t_file *file, t_wid *wid);
 void				inorder(uint16_t opt, t_file *file, t_wid *wid);
 void				print_name(uint16_t opt, t_file *file);
-void				ls_output(int mode, char *arg);
+void				set_color(t_stat info);
 
 void				long_format(uint16_t opt, t_file *file, t_wid *wid);
 void				print_st_mode(t_file *file);

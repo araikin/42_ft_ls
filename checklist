@@ -15,17 +15,14 @@
 
 + 	symbolic links
 +	for multiple arguments prints no file for reg_files for all options
++	no need for set_wid for multiple args and recursion
 +	-F      Display a slash (`/') immediately after each pathname that is a directory, an
              asterisk (`*') after each that is executable, an at sign (`@') after each
              symbolic link, an equals sign (`=') after each socket, a percent sign (`%')
              after each whiteout, and a vertical bar (`|') after each that is a FIFO.
 
 - 	stat/lstat
-- 	-t with multiple args
--	no need for set_wid for multiple args and recursion
-
-
-
++ 	-t with multiple args
 -	-u (sort by time of last access) option
 -	-1 option (output in 1 column) The -1, -C, -x, and -l options all override each other;
 -	-h      When used with the -l option, use unit suffixes: Byte, Kilobyte, Megabyte,
@@ -39,3 +36,17 @@
              listing.  The environment variable BLOCKSIZE overrides the unit size of 512 bytes.`
 -	-T      When used with the -l (lowercase letter ``ell'') option, display complete time
              information for the file, including month, day, hour, minute, second, and year.
+
+
++   blue + default		-	directory
++   cyan + default		-	symbolic link
++   green + default		-	socket
++   brown + default		-	pipe
++   red + default		-	executable
+
++   blue + cyan			-	block special
++   blue + yellow		-	character special
++   black + red			-	executable with setuid bit set
++   black + cyan		-	executable with setgid bit set
++  	black + green		-	directory writable to others, with sticky bit
++  	black + yellow		-	directory writable to others, without sticky bit

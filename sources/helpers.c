@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:06:11 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 15:52:09 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/29 16:43:46 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,33 @@ void	destroy_file(t_file *file)
 		free(file->name);
 		free(file->path);
 		free(file);
+	}
+}
+
+void	ls_output(int mode, char *arg)
+{
+	char	*tmp;
+	int		i;
+	int		k;
+
+	tmp = NULL;
+	k = 0;
+	if (mode == 1)
+	{
+		ft_printf("ls: illegal option -- %c\n", arg[0]);
+		ft_printf("usage: ./ft_ls [-AGFRSaflrt] [file ...]\n");
+		exit(EXIT_FAILURE);
+	}
+	else if (mode == 2)
+		ft_printf("ls: %s: No such file or directory\n", arg);
+	else if (mode == 3)
+	{
+		i = -1;
+		while (arg[++i])
+			if (arg[i] == '/')
+				k = i + 1;
+		tmp = k > 0 ? ft_strdup(&arg[k]) : ft_strdup(arg);
+		ft_printf("ls: %s: Permission denied\n", tmp);
+		free(tmp);
 	}
 }

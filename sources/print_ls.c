@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 15:40:32 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/28 18:02:24 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/29 17:38:05 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,58 +48,44 @@ void	inorder(uint16_t opt, t_file *file, t_wid *wid)
 	}
 }
 
-void	print_name(uint16_t opt, t_file *file)
+void	set_color(t_stat info)
 {
-	if (S_ISLNK(file->info.st_mode))
-		return (print_link(opt, file));
-	if (opt & G_UPP)
+	if (S_ISDIR(info.st_mode) && info.st_mode & S_IWOTH)
 	{
-		if (S_ISDIR(file->info.st_mode))
-			write(1, "\x1b[34m", 5);
-		else if (S_ISSOCK(file->info.st_mode))
-			write(1, "\x1b[32m", 5);
-		else if (S_ISBLK(file->info.st_mode))
-			write(1, "\x1b[36m", 5);
-		else if (S_ISCHR(file->info.st_mode) ||
-				S_ISFIFO(file->info.st_mode))
-			write(1, "\x1b[30m", 5);
-		else if (S_ISREG(file->info.st_mode) &&
-				(file->info.st_mode & S_IXUSR ||
-				file->info.st_mode & S_IXGRP ||
-				file->info.st_mode & S_IXOTH))
-			write(1, "\x1b[31m", 5);
+		write(1, info.st_mode & S_ISVTX ? "\x1b[42m" : "\x1b[43m", 5);
+		write(1, "\x1b[30m", 5);
 	}
-	ft_printf("%s", file->name);
-	write(1, "\x1b[0m", 5);
-	if ((opt & F_UPP) && (opt & L_LOW))
-		print_type(file);
-	ft_printf("\n");
+	else if (S_ISDIR(info.st_mode))
+		write(1, "\x1b[34m", 5);
+	S_ISSOCK(info.st_mode) ? write(1, "\x1b[32m", 5) : 0;
+	S_ISBLK(info.st_mode) ? write(1, "\x1b[46m", 5) : 0;
+	S_ISCHR(info.st_mode) ? write(1, "\x1b[43m", 5) : 0;
+	S_ISFIFO(info.st_mode) ? write(1, "\x1b[33m", 5) : 0;
+	if (S_ISBLK(info.st_mode) || S_ISCHR(info.st_mode))
+		write(1, "\x1b[34m", 5);
+	if (info.st_mode & S_IXUSR || info.st_mode & S_IXGRP ||
+			info.st_mode & S_IXOTH)
+	{
+		if (S_ISREG(info.st_mode))
+			write(1, "\x1b[31m", 5);
+		else if (info.st_mode & S_ISUID || info.st_mode & S_ISGID)
+		{
+			write(1, "\x1b[30m", 5);
+			if (info.st_mode & S_ISUID)
+				write(1, info.st_mode & S_ISUID ? "\x1b[41m" : "\x1b[46m", 5);
+		}
+	}
 }
 
-void	ls_output(int mode, char *arg)
+void	print_name(uint16_t opt, t_file *file)
 {
-	char	*tmp;
-	int		i;
-	int		k;
-
-	tmp = NULL;
-	k = 0;
-	if (mode == 1)
-	{
-		ft_printf("ls: illegal option -- %c\n", arg[0]);
-		ft_printf("usage: ./ft_ls [-AGFRSaflrt] [file ...]\n");
-		exit(EXIT_FAILURE);
-	}
-	else if (mode == 2)
-		ft_printf("ls: %s: No such file or directory\n", arg);
-	else if (mode == 3)
-	{
-		i = -1;
-		while (arg[++i])
-			if (arg[i] == '/')
-				k = i + 1;
-		tmp = k > 0 ? ft_strdup(&arg[k]) : ft_strdup(arg);
-		ft_printf("ls: %s: Permission denied\n", tmp);
-		free(tmp);
-	}
+	if (S_ISLNK(file->info.st_mode) && opt & L_LOW)
+		return (print_link(opt, file));
+	if (opt & G_UPP)
+		set_color(file->info);
+	ft_printf("%s", file->name);
+	write(1, "\x1b[0m", 5);
+	if (opt & F_UPP)
+		print_type(file);
+	ft_printf("\n");
 }
