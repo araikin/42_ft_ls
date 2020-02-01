@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 15:45:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/29 16:43:45 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/30 15:13:22 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,49 +15,23 @@
 void	long_format(uint16_t opt, t_file *file, t_wid *wid)
 {
 	print_st_mode(file);
-	ft_printf("%*d %-*s  %-*s  %*d ",
+	ft_printf("%*d %-*s  %-*s  ",
 		wid->links, file->info.st_nlink,
 		wid->uid, (getpwuid(file->info.st_uid))->pw_name,
-		wid->gid, (getgrgid(file->info.st_gid))->gr_name,
-		wid->size, file->info.st_size);
+		wid->gid, (getgrgid(file->info.st_gid))->gr_name);
+	if (wid->chr_blk > 0)
+	{
+		if (S_ISCHR(file->info.st_mode) || S_ISBLK(file->info.st_mode))
+			ft_printf("%*d, %*d ", wid->major, major(file->info.st_rdev),
+					wid->minor, minor(file->info.st_rdev));
+		else
+			ft_printf("%*d ", wid->major + wid->minor + 2,
+					file->info.st_size);
+	}
+	else
+		ft_printf("%*d ", wid->size, file->info.st_size);
 	print_time(file->info.st_mtime);
 	print_name(opt, file);
-}
-
-void	print_type(t_file *file)
-{
-	if (S_ISDIR(file->info.st_mode))
-		ft_putchar('/');
-	else if (S_ISLNK(file->info.st_mode))
-		ft_putchar('@');
-	else if (S_ISREG(file->info.st_mode) && (file->info.st_mode & S_IXUSR ||
-			file->info.st_mode & S_IXGRP || file->info.st_mode & S_IXOTH))
-		ft_putchar('*');
-	else if (S_ISSOCK(file->info.st_mode))
-		ft_putchar('=');
-	else if (S_ISFIFO(file->info.st_mode))
-		ft_putchar('|');
-	else if (S_ISWHT(file->info.st_mode))
-		ft_putchar('%');
-}
-
-void	print_link(uint16_t opt, t_file *file)
-{
-	t_stat	status;
-	char	*link;
-
-	lstat(file->path, &status);
-	link = (char*)malloc(sizeof(char) * (status.st_size + 1));
-	readlink(file->path, link, status.st_size + 1);
-	link[status.st_size] = '\0';
-	if (opt & G_UPP)
-		write(1, "\x1b[35m", 5);
-	ft_printf("%s", file->name);
-	write(1, "\x1b[0m", 5);
-	if ((opt & F_UPP) && (opt & L_LOW))
-		print_type(file);
-	ft_printf(" -> %s\n", link);
-	free(link);
 }
 
 void	print_st_mode(t_file *file)
@@ -111,4 +85,32 @@ void	print_time(time_t mod_time)
 		while (i < 16)
 			write(1, &mtime[i++], 1);
 	write(1, " ", 1);
+}
+
+void	print_name(uint16_t opt, t_file *file)
+{
+	if (S_ISLNK(file->info.st_mode) && opt & L_LOW)
+		return (print_link(opt, file));
+	if (opt & G_UPP)
+		set_color(file->info);
+	ft_printf("%s", file->name);
+	if (opt & G_UPP)
+		write(1, "\x1b[0m", 5);
+	if (opt & F_UPP)
+		print_type(file->info);
+	ft_printf("\n");
+}
+
+void	print_link(uint16_t opt, t_file *file)
+{
+	char	link[255];
+
+	link[readlink(file->path, link, 254)] = '\0';
+	if (opt & G_UPP)
+		write(1, "\x1b[35m", 5);
+	ft_printf("%s", file->name);
+	write(1, "\x1b[0m", 5);
+	if ((opt & F_UPP) && (opt & L_LOW))
+		print_type(file->info);
+	ft_printf(" -> %s\n", link);
 }

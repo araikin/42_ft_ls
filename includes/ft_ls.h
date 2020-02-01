@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 12:48:03 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/29 17:52:59 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/30 15:18:43 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ typedef struct		s_wid
 	int				uid;
 	int				gid;
 	int				size;
+	int				chr_blk;
+	int				minor;
+	int				major;
 	char			mode;
 }					t_wid;
 
@@ -83,13 +86,14 @@ void				ls_output(int mode, char *arg);
 void				print_ls(uint16_t opt, t_file *file, t_wid *wid, int n);
 void				revorder(uint16_t opt, t_file *file, t_wid *wid);
 void				inorder(uint16_t opt, t_file *file, t_wid *wid);
-void				print_name(uint16_t opt, t_file *file);
-void				set_color(t_stat info);
 
 void				long_format(uint16_t opt, t_file *file, t_wid *wid);
 void				print_st_mode(t_file *file);
 void				print_time(time_t mod_time);
+void				print_name(uint16_t opt, t_file *file);
 void				print_link(uint16_t opt, t_file *file);
-void				print_type(t_file *file);
+
+void				set_color(t_stat info);
+void				print_type(t_stat info);
 
 #endif

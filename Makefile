@@ -1,6 +1,18 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: asultanb <marvin@42.fr>                    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/01/31 13:55:12 by asultanb          #+#    #+#              #
+#    Updated: 2020/01/31 13:55:14 by asultanb         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME	:=	ft_ls
 FLAGS	:=	-Wall -Wextra -Werror
-F_N		:=	ft_ls file_ls print_ls utils helpers long_format
+F_N		:=	ft_ls file_ls print_ls utils helpers long_format bonus
 SRC		:=	$(addprefix sources/, $(addsuffix .c, $(F_N)))
 OBJ		:=	$(addprefix objects/, $(addsuffix .o, $(F_N)))
 INCL	:=	includes
@@ -19,6 +31,7 @@ objects/%.o : sources/%.c
 
 $(NAME):	$(OBJ)
 	@make -C $(LIB)
+	@echo "$(KGRN)libft is done $(KNRM)"
 	@gcc $(LIB_LINK) $(OBJ) -o $(NAME)
 	@echo "$(KGRN)./ft_ls is compiled $(KNRM)"
 

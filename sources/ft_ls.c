@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:05:12 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/29 17:26:37 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/31 16:46:22 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	ft_ls_one_arg(uint16_t opt, char *arg, t_wid *wid)
 	t_file	*file;
 
 	file = NULL;
+	ft_bzero(wid, sizeof(t_wid));
 	set_info(opt, &file, arg);
 	if (opt & L_LOW)
 		set_wid(file, wid);
@@ -52,18 +53,25 @@ void	ft_ls_mul_args(uint16_t opt, char **args, t_wid *wid)
 
 	i = -1;
 	f = NULL;
-	ft_strsort(args);
-	if (opt & T_LOW)
-		sort_time_args(args);
+	opt & T_LOW ? sort_time_args(args) : ft_strsort(args);
 	while (args[++i])
 		if (is_file(args[i]))
 			set_info(opt, &f, args[i]);
 	check = f == NULL ? 0 : 1;
-	if (opt & L_LOW)
-		set_wid(f, wid);
+	opt & L_LOW ? set_wid(f, wid) : 0;
 	print_ls(opt, f, wid, 0);
 	destroy_file(f);
-	handle_dir(opt, args, wid, check);
+	i = -1;
+	while (args[++i])
+	{
+		if (is_dir(args[i]) == 1)
+		{
+			check > 0 ? ft_putchar('\n') : 0;
+			ft_printf("%s:\n", args[i]);
+			ft_ls_one_arg(opt, ft_strdup(args[i]), wid);
+			check++;
+		}
+	}
 }
 
 void	r_upp(uint16_t opt, char *path, t_wid *wid, t_file *f)
@@ -72,23 +80,23 @@ void	r_upp(uint16_t opt, char *path, t_wid *wid, t_file *f)
 	DIR		*d;
 
 	tmp = ft_strcjoin(path, '/', f->name);
-	if ((d = opendir(tmp)) &&
-			ft_strcmp(f->name, ".") && ft_strcmp(f->name, ".."))
+	if (ft_strcmp(f->name, ".") && ft_strcmp(f->name, "..") && !is_file(tmp))
 	{
-		closedir(d);
-		ft_printf("\n%s:\n", tmp);
-		ft_ls_one_arg(opt, tmp, wid);
-	}
-	else if (is_dir(tmp) == 1 && !(d = opendir(tmp)))
-	{
-		ft_printf("\n%s:\n", tmp);
-		ls_output(3, tmp);
+		if (!(d = opendir(tmp)))
+		{
+			ft_printf("\n%s:\n", tmp);
+			ls_output(3, f->name);
+			free(tmp);
+		}
+		else
+		{
+			closedir(d);
+			ft_printf("\n%s:\n", tmp);
+			ft_ls_one_arg(opt, tmp, wid);
+		}
 	}
 	else
-	{
-		d != 0 ? closedir(d) : 0;
 		free(tmp);
-	}
 }
 
 void	iter_r(uint16_t opt, char *path, t_wid *wid, t_file *d)
@@ -96,7 +104,8 @@ void	iter_r(uint16_t opt, char *path, t_wid *wid, t_file *d)
 	if (d != NULL)
 	{
 		iter_r(opt, path, wid, d->left);
-		r_upp(opt, path, wid, d);
+		if (!S_ISLNK(d->info.st_mode))
+			r_upp(opt, path, wid, d);
 		iter_r(opt, path, wid, d->right);
 	}
 }

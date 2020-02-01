@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/29 17:37:18 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/01/31 14:00:23 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	set_options(uint16_t *opt, char *s, int i)
 	{
 		if (s[i] == 'a')
 			*opt = *opt | A_LOW;
-		if (s[i] == 'f')
+		else if (s[i] == 'f')
 			*opt = *opt | F_LOW;
 		else if (s[i] == 'A')
 			*opt = *opt | A_UPP;
@@ -52,7 +52,7 @@ void	set_info(uint16_t opt, t_file **f, char *arg)
 	t = 0;
 	if (is_file(arg) == 1)
 		*f = insert_file(opt, *f, new_node(arg, NULL, &t));
-	else if (is_dir(arg) == 1)
+	else if (!is_file(arg))
 	{
 		if (!(dir = opendir(arg)))
 			ls_output(3, arg);
@@ -80,7 +80,17 @@ void	set_wid(t_file *root, t_wid *wid)
 			wid->uid = (int)ft_strlen(getpwuid(root->info.st_uid)->pw_name);
 		if (wid->gid < (int)ft_strlen(getgrgid(root->info.st_gid)->gr_name))
 			wid->gid = (int)ft_strlen(getgrgid(root->info.st_gid)->gr_name);
-		if (wid->size < ft_digitcnt((int)root->info.st_size))
+		if (S_ISCHR(root->info.st_mode) || S_ISBLK(root->info.st_mode))
+		{
+			wid->chr_blk++;
+			if (wid->minor < ft_digitcnt(minor(root->info.st_rdev)))
+				wid->minor = ft_digitcnt(minor(root->info.st_rdev));
+			if (wid->major < ft_digitcnt(major(root->info.st_rdev)))
+				wid->major = ft_digitcnt(major(root->info.st_rdev));
+			if (wid->minor < wid->size)
+				wid->minor = wid->size;
+		}
+		else if (wid->size < ft_digitcnt((int)root->info.st_size))
 			wid->size = ft_digitcnt((int)root->info.st_size);
 		set_wid(root->right, wid);
 	}
@@ -131,6 +141,7 @@ void	handle_dir(uint16_t opt, char **args, t_wid *wid, int check)
 			if (opt & R_UPP)
 				iter_r(opt, tmp, wid, f);
 			destroy_file(f);
+			ft_bzero(wid, sizeof(t_wid));
 			free(tmp);
 			check++;
 		}
