@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 15:45:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/30 15:13:22 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/04 16:13:26 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,20 +85,6 @@ void	print_time(time_t mod_time)
 		while (i < 16)
 			write(1, &mtime[i++], 1);
 	write(1, " ", 1);
-}
-
-void	print_name(uint16_t opt, t_file *file)
-{
-	if (S_ISLNK(file->info.st_mode) && opt & L_LOW)
-		return (print_link(opt, file));
-	if (opt & G_UPP)
-		set_color(file->info);
-	ft_printf("%s", file->name);
-	if (opt & G_UPP)
-		write(1, "\x1b[0m", 5);
-	if (opt & F_UPP)
-		print_type(file->info);
-	ft_printf("\n");
 }
 
 void	print_link(uint16_t opt, t_file *file)

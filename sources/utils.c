@@ -6,11 +6,28 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/31 14:00:23 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/04 15:14:11 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
+
+int		set_options_upp(uint16_t *opt, char c)
+{
+	if (c == 'A')
+		*opt = *opt | A_UPP;
+	else if (c == 'R')
+		*opt = *opt | R_UPP;
+	else if (c == 'S')
+		*opt = *opt | S_UPP;
+	else if (c == 'G')
+		*opt = *opt | G_UPP;
+	else if (c == 'F')
+		*opt = *opt | F_UPP;
+	else
+		return (0);
+	return (1);
+}
 
 void	set_options(uint16_t *opt, char *s, int i)
 {
@@ -18,25 +35,25 @@ void	set_options(uint16_t *opt, char *s, int i)
 	{
 		if (s[i] == 'a')
 			*opt = *opt | A_LOW;
+		else if (s[i] == '1')
+		{
+			*opt = *opt | ONE;
+			if (*opt & L_LOW)
+				*opt = *opt ^ L_LOW;
+		}
 		else if (s[i] == 'f')
 			*opt = *opt | F_LOW;
-		else if (s[i] == 'A')
-			*opt = *opt | A_UPP;
 		else if (s[i] == 'l')
+		{
 			*opt = *opt | L_LOW;
+			if (*opt & ONE)
+				*opt = *opt ^ ONE;
+		}
 		else if (s[i] == 't')
 			*opt = *opt | T_LOW;
 		else if (s[i] == 'r')
 			*opt = *opt | R_LOW;
-		else if (s[i] == 'R')
-			*opt = *opt | R_UPP;
-		else if (s[i] == 'S')
-			*opt = *opt | S_UPP;
-		else if (s[i] == 'G')
-			*opt = *opt | G_UPP;
-		else if (s[i] == 'F')
-			*opt = *opt | F_UPP;
-		else
+		else if (!set_options_upp(opt, s[i]))
 			ls_output(1, &s[i]);
 	}
 }
@@ -116,34 +133,6 @@ void	sort_time_args(char **args)
 			args[i] = args[i + 1];
 			args[i + 1] = tmp;
 			i = -1;
-		}
-	}
-}
-
-void	handle_dir(uint16_t opt, char **args, t_wid *wid, int check)
-{
-	t_file	*f;
-	int		i;
-	char	*tmp;
-
-	i = -1;
-	while (args[++i])
-	{
-		f = NULL;
-		if (is_dir(args[i]) == 1)
-		{
-			tmp = ft_strdup(args[i]);
-			check > 0 ? ft_putchar('\n') : ft_putstr("");
-			ft_printf("%s:\n", tmp);
-			set_info(opt, &f, tmp);
-			set_wid(f, wid);
-			print_ls(opt, f, wid, 1);
-			if (opt & R_UPP)
-				iter_r(opt, tmp, wid, f);
-			destroy_file(f);
-			ft_bzero(wid, sizeof(t_wid));
-			free(tmp);
-			check++;
 		}
 	}
 }

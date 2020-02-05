@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 12:48:03 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/30 15:18:43 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/04 15:50:07 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # define F_LOW 128
 # define G_UPP 256
 # define F_UPP 512
+# define ONE 1024
 
 typedef struct dirent	t_dirent;
 typedef struct stat		t_stat;
@@ -86,11 +87,11 @@ void				ls_output(int mode, char *arg);
 void				print_ls(uint16_t opt, t_file *file, t_wid *wid, int n);
 void				revorder(uint16_t opt, t_file *file, t_wid *wid);
 void				inorder(uint16_t opt, t_file *file, t_wid *wid);
+void				print_name(uint16_t opt, t_file *file);
 
 void				long_format(uint16_t opt, t_file *file, t_wid *wid);
 void				print_st_mode(t_file *file);
 void				print_time(time_t mod_time);
-void				print_name(uint16_t opt, t_file *file);
 void				print_link(uint16_t opt, t_file *file);
 
 void				set_color(t_stat info);

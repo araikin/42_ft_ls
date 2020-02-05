@@ -6,11 +6,13 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:05:12 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/31 16:46:22 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/04 16:13:24 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
+
+extern int g_first;
 
 int		main(int ac, char **av)
 {
@@ -20,7 +22,7 @@ int		main(int ac, char **av)
 
 	i = 1;
 	ft_bzero(&wid, sizeof(t_wid));
-	while (av[i] && av[i][0] == '-' && ac--)
+	while (av[i] && av[i][0] == '-' && av[i][1] && ac--)
 		set_options(&opt, av[i++], 0);
 	if (ac == 2 || av[i] == NULL)
 		ft_ls_one_arg(opt, ft_strdup(av[i] ? av[i] : "."), &wid);
@@ -38,7 +40,10 @@ void	ft_ls_one_arg(uint16_t opt, char *arg, t_wid *wid)
 	set_info(opt, &file, arg);
 	if (opt & L_LOW)
 		set_wid(file, wid);
+	g_first = 1;
 	print_ls(opt, file, wid, is_dir(arg) ? 1 : 0);
+	if (!(opt & L_LOW) && !(opt & ONE))
+		ft_printf("\n");
 	if (opt & R_UPP)
 		iter_r(opt, arg, wid, file);
 	destroy_file(file);
