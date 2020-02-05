@@ -1,3 +1,6 @@
+-	fix tabs or remove them
+-	fix new line after messages because of tabs
+
 +	-t in miliseconds/nanoseconds
 +	permission denied doesn't work
 +	-f (no sorting) option

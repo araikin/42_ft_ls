@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/17 15:40:32 by asultanb          #+#    #+#             */
-/*   Updated: 2020/02/04 16:13:27 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/04 16:33:59 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	print_ls(uint16_t opt, t_file *file, t_wid *wid, int dir)
 		revorder(opt, file, wid);
 	else
 		inorder(opt, file, wid);
+	if (!(opt & L_LOW) && !(opt & ONE))
+		ft_printf("\n");
 }
 
 void	revorder(uint16_t opt, t_file *file, t_wid *wid)
