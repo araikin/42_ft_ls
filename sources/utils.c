@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/15 16:33:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/02/04 15:14:11 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/06 16:24:06 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,19 @@ void	set_options(uint16_t *opt, char *s, int i)
 	{
 		if (s[i] == 'a')
 			*opt = *opt | A_LOW;
+		else if (s[i] == 'g')
+			*opt = *opt | G_LOW;
 		else if (s[i] == '1')
 		{
 			*opt = *opt | ONE;
-			if (*opt & L_LOW)
-				*opt = *opt ^ L_LOW;
+			(*opt & L_LOW) ? (*opt = *opt ^ L_LOW) : 0;
 		}
 		else if (s[i] == 'f')
 			*opt = *opt | F_LOW;
 		else if (s[i] == 'l')
 		{
 			*opt = *opt | L_LOW;
-			if (*opt & ONE)
-				*opt = *opt ^ ONE;
+			(*opt & ONE) ? (*opt = *opt ^ ONE) : 0;
 		}
 		else if (s[i] == 't')
 			*opt = *opt | T_LOW;

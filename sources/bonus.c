@@ -6,11 +6,36 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/31 10:01:20 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/31 10:01:22 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/06 16:11:49 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
+
+void	print_acl_extattr(t_file *file)
+{
+	char		c;
+	acl_t		acl;
+	ssize_t		xattr;
+	acl_entry_t	dummy;
+
+	acl = NULL;
+	xattr = 0;
+	acl = acl_get_link_np(file->path, ACL_TYPE_EXTENDED);
+	xattr = listxattr(file->path, NULL, 0, XATTR_NOFOLLOW);
+	if (acl && acl_get_entry(acl, ACL_FIRST_ENTRY, &dummy) == -1)
+	{
+		acl_free(acl);
+		acl = NULL;
+	}
+	if (xattr > 0)
+		c = '@';
+	else if (acl != NULL)
+		c = '+';
+	else
+		c = ' ';
+	ft_printf("%c ", c);
+}
 
 void	print_type(t_stat info)
 {

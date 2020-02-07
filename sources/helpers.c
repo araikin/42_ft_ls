@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:06:11 by asultanb          #+#    #+#             */
-/*   Updated: 2020/01/30 15:12:42 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/06 16:25:50 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	ls_output(int mode, char *arg)
 	if (mode == 1)
 	{
 		ft_printf("ls: illegal option -- %c\n", arg[0]);
-		ft_printf("usage: ./ft_ls [-AGFRSaflrt] [file ...]\n");
+		ft_printf("usage: ./ft_ls [-1AFGRSafglrt] [file ...]\n");
 		exit(EXIT_FAILURE);
 	}
 	else if (mode == 2)

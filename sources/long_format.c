@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 15:45:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/02/04 16:13:26 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/06 16:26:07 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 void	long_format(uint16_t opt, t_file *file, t_wid *wid)
 {
-	print_st_mode(file);
-	ft_printf("%*d %-*s  %-*s  ",
-		wid->links, file->info.st_nlink,
-		wid->uid, (getpwuid(file->info.st_uid))->pw_name,
-		wid->gid, (getgrgid(file->info.st_gid))->gr_name);
+	print_st_mode(file, file->info.st_mode);
+	ft_printf("%*d ", wid->links, file->info.st_nlink);
+	if (!(*opt & G_LOW))
+		ft_printf("%-*s  ", wid->uid, (getpwuid(file->info.st_uid))->pw_name);
+	ft_printf("%-*s  ", wid->gid, (getgrgid(file->info.st_gid))->gr_name);
 	if (wid->chr_blk > 0)
 	{
 		if (S_ISCHR(file->info.st_mode) || S_ISBLK(file->info.st_mode))
@@ -34,33 +34,28 @@ void	long_format(uint16_t opt, t_file *file, t_wid *wid)
 	print_name(opt, file);
 }
 
-void	print_st_mode(t_file *file)
+void	print_st_mode(t_file *file, mode_t st_mode)
 {
 	char	c;
 	char	s_uid;
 	char	s_gid;
 	char	st_bit;
 
-	st_bit = file->info.st_mode & S_ISVTX ? 't' : 'x';
-	s_uid = file->info.st_mode & S_ISUID ? 's' : 'x';
-	s_gid = file->info.st_mode & S_ISGID ? 's' : 'x';
-	c = S_ISDIR(file->info.st_mode) ? 'd' : '-';
-	c = S_ISLNK(file->info.st_mode) ? 'l' : c;
-	c = S_ISBLK(file->info.st_mode) ? 'b' : c;
-	c = S_ISCHR(file->info.st_mode) ? 'c' : c;
-	c = S_ISSOCK(file->info.st_mode) ? 's' : c;
-	c = S_ISFIFO(file->info.st_mode) ? 'p' : c;
-	ft_printf("%c%c%c%c%c%c%c%c%c%c%c ", c,
-		file->info.st_mode & S_IRUSR ? 'r' : '-',
-		file->info.st_mode & S_IWUSR ? 'w' : '-',
-		file->info.st_mode & S_IXUSR ? s_uid : '-',
-		file->info.st_mode & S_IRGRP ? 'r' : '-',
-		file->info.st_mode & S_IWGRP ? 'w' : '-',
-		file->info.st_mode & S_IXGRP ? s_gid : '-',
-		file->info.st_mode & S_IROTH ? 'r' : '-',
-		file->info.st_mode & S_IWOTH ? 'w' : '-',
-		file->info.st_mode & S_IXOTH ? st_bit : '-',
-		listxattr(file->path, NULL, 0, XATTR_NOFOLLOW) > 0 ? '@' : ' ');
+	st_bit = st_mode & S_ISVTX ? 't' : 'x';
+	s_uid = st_mode & S_ISUID ? 's' : 'x';
+	s_gid = st_mode & S_ISGID ? 's' : 'x';
+	c = S_ISDIR(st_mode) ? 'd' : '-';
+	c = S_ISLNK(st_mode) ? 'l' : c;
+	c = S_ISBLK(st_mode) ? 'b' : c;
+	c = S_ISCHR(st_mode) ? 'c' : c;
+	c = S_ISSOCK(st_mode) ? 's' : c;
+	c = S_ISFIFO(st_mode) ? 'p' : c;
+	ft_printf("%c%c%c%c%c%c%c%c%c%c", c, st_mode & S_IRUSR ? 'r' : '-',
+		st_mode & S_IWUSR ? 'w' : '-', st_mode & S_IXUSR ? s_uid : '-',
+		st_mode & S_IRGRP ? 'r' : '-', st_mode & S_IWGRP ? 'w' : '-',
+		st_mode & S_IXGRP ? s_gid : '-', st_mode & S_IROTH ? 'r' : '-',
+		st_mode & S_IWOTH ? 'w' : '-', st_mode & S_IXOTH ? st_bit : '-');
+	print_acl_extattr(file);
 }
 
 void	print_time(time_t mod_time)
