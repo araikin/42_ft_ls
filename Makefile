@@ -6,7 +6,7 @@
 #    By: asultanb <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/01/31 13:55:12 by asultanb          #+#    #+#              #
-#    Updated: 2020/01/31 13:55:14 by asultanb         ###   ########.fr        #
+#    Updated: 2020/02/07 13:27:43 by asultanb         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ all	: $(NAME)
 
 objects/%.o : sources/%.c
 	@/bin/mkdir -p objects
-	@gcc $(FLAGS) -I $(INCL) -c $< -o $@ -g
+	@gcc $(FLAGS) -I $(INCL) -c $< -o $@
 
 $(NAME):	$(OBJ)
 	@make -C $(LIB)

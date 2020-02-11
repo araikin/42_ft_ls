@@ -6,7 +6,7 @@
 /*   By: asultanb <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 15:45:36 by asultanb          #+#    #+#             */
-/*   Updated: 2020/02/06 16:26:07 by asultanb         ###   ########.fr       */
+/*   Updated: 2020/02/07 12:27:35 by asultanb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	long_format(uint16_t opt, t_file *file, t_wid *wid)
 {
 	print_st_mode(file, file->info.st_mode);
 	ft_printf("%*d ", wid->links, file->info.st_nlink);
-	if (!(*opt & G_LOW))
+	if (!(opt & G_LOW))
 		ft_printf("%-*s  ", wid->uid, (getpwuid(file->info.st_uid))->pw_name);
 	ft_printf("%-*s  ", wid->gid, (getgrgid(file->info.st_gid))->gr_name);
 	if (wid->chr_blk > 0)
